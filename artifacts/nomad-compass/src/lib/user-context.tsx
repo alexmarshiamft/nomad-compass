@@ -8,6 +8,7 @@ interface UserProfile {
   teamTimezone?: string;
   priorities: string[];
   customNote?: string;
+  stayInUSA?: boolean;
 }
 
 interface UserContextType {

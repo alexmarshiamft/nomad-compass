@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Globe2, Plane, ShieldCheck, Wallet, ArrowRight, Check } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -81,6 +82,7 @@ export default function Home() {
   const [step, setStep] = useState<"form" | "refine">("form");
   const [selectedPriorities, setSelectedPriorities] = useState<string[]>(profile.priorities ?? []);
   const [customNote, setCustomNote] = useState(profile.customNote ?? "");
+  const [stayInUSA, setStayInUSA] = useState(profile.stayInUSA ?? false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -105,8 +107,13 @@ export default function Home() {
       employerState: values.employerState || undefined,
       workSchedule: values.workSchedule || undefined,
       teamTimezone: values.teamTimezone || undefined,
+      stayInUSA,
     });
-    setStep("refine");
+    if (stayInUSA) {
+      setLocation("/compare");
+    } else {
+      setStep("refine");
+    }
   }
 
   function goToPicks() {
@@ -120,12 +127,13 @@ export default function Home() {
       teamTimezone: values.teamTimezone || undefined,
       priorities: selectedPriorities,
       customNote,
+      stayInUSA,
     });
     setLocation("/recommendations");
   }
 
   function goToCompare() {
-    setProfile({ ...profile, priorities: selectedPriorities, customNote });
+    setProfile({ ...profile, priorities: selectedPriorities, customNote, stayInUSA });
     setLocation("/compare");
   }
 
@@ -278,6 +286,34 @@ export default function Home() {
                         />
                       </div>
 
+                      {/* Stay in USA toggle */}
+                      <div
+                        className={`flex items-center justify-between rounded-xl border px-4 py-3 cursor-pointer transition-all ${
+                          stayInUSA
+                            ? "border-amber-500/60 bg-amber-500/10"
+                            : "border-white/10 bg-white/[0.04] hover:border-white/20"
+                        }`}
+                        onClick={() => setStayInUSA(!stayInUSA)}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-xl">🇺🇸</span>
+                          <div>
+                            <p className="text-white text-sm font-medium leading-none mb-0.5">
+                              Stay within the USA
+                            </p>
+                            <p className="text-white/40 text-xs">
+                              Compare US cities only — Austin, Miami, Denver & more
+                            </p>
+                          </div>
+                        </div>
+                        <Switch
+                          checked={stayInUSA}
+                          onCheckedChange={setStayInUSA}
+                          className="data-[state=checked]:bg-amber-500"
+                          onClick={e => e.stopPropagation()}
+                        />
+                      </div>
+
                       <div className="flex flex-col sm:flex-row gap-3 pt-1">
                         <Button
                           type="submit"
@@ -285,19 +321,21 @@ export default function Home() {
                           className="flex-1 text-base bg-amber-500 hover:bg-amber-400 text-black font-semibold group border-0"
                           data-testid="button-compare"
                         >
-                          Compare Locations
+                          {stayInUSA ? "Find Best US Cities" : "Compare Locations"}
                           <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="lg"
-                          className="flex-1 text-base border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent"
-                          onClick={goToPicks}
-                          data-testid="button-ai-picks"
-                        >
-                          Get AI Picks
-                        </Button>
+                        {!stayInUSA && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="lg"
+                            className="flex-1 text-base border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent"
+                            onClick={goToPicks}
+                            data-testid="button-ai-picks"
+                          >
+                            Get AI Picks
+                          </Button>
+                        )}
                       </div>
                     </form>
                   </Form>

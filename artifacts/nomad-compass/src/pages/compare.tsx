@@ -16,6 +16,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowUpDown, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+const US_STATE: Record<string, string> = {
+  "us-austin": "TX", "us-miami": "FL", "us-denver": "CO",
+  "us-nashville": "TN", "us-tampa": "FL", "us-phoenix": "AZ",
+  "us-raleigh": "NC", "us-seattle": "WA",
+};
+
 export default function Compare() {
   const [, setLocation] = useLocation();
   const { profile } = useUser();
@@ -30,11 +36,16 @@ export default function Compare() {
 
   useEffect(() => {
     if (locationsData?.locations && !compareMutation.isPending && !compareMutation.data) {
+      const locationIds = profile.stayInUSA
+        ? locationsData.locations.filter(l => l.countryCode === "US").map(l => l.id)
+        : undefined;
+
       compareMutation.mutate({
         data: {
           annualIncomeUSD: profile.annualIncomeUSD,
           employerCountry: profile.employerCountry,
           employerState: profile.employerState,
+          locationIds,
         }
       });
     }
@@ -56,7 +67,6 @@ export default function Compare() {
       let valA: any = a[sortCol as keyof typeof a];
       let valB: any = b[sortCol as keyof typeof b];
 
-      // Handle nested values if needed
       if (sortCol === "monthlyNetIncomeUSD") {
         valA = a.monthlyNetIncomeUSD;
         valB = b.monthlyNetIncomeUSD;
@@ -74,12 +84,21 @@ export default function Compare() {
     });
   }, [compareMutation.data, sortCol, sortDesc]);
 
+  const isUSMode = profile.stayInUSA;
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Global Comparison</h1>
+        <div className="flex items-center gap-2 mb-1">
+          {isUSMode && <span className="text-2xl">🇺🇸</span>}
+          <h1 className="text-3xl font-bold">
+            {isUSMode ? "Best US Cities for Remote Work" : "Global Comparison"}
+          </h1>
+        </div>
         <p className="text-muted-foreground">
-          Ranking locations based on an income of {formatCurrency(profile.annualIncomeUSD)} from {profile.employerCountry}.
+          {isUSMode
+            ? `Ranking US cities for a ${formatCurrency(profile.annualIncomeUSD)} income, including federal + state taxes and cost of living.`
+            : `Ranking locations based on an income of ${formatCurrency(profile.annualIncomeUSD)} from ${profile.employerCountry}.`}
         </p>
       </div>
 
@@ -109,17 +128,19 @@ export default function Compare() {
                 <TableHead className="cursor-pointer" onClick={() => handleSort("qualityOfLife")}>
                   <div className="flex items-center gap-1">QoL <ArrowUpDown className="w-3 h-3" /></div>
                 </TableHead>
-                <TableHead className="cursor-pointer text-center" onClick={() => handleSort("hasDigitalNomadVisa")}>
-                  <div className="flex justify-center items-center gap-1">Nomad Visa <ArrowUpDown className="w-3 h-3" /></div>
-                </TableHead>
+                {!isUSMode && (
+                  <TableHead className="cursor-pointer text-center" onClick={() => handleSort("hasDigitalNomadVisa")}>
+                    <div className="flex justify-center items-center gap-1">Nomad Visa <ArrowUpDown className="w-3 h-3" /></div>
+                  </TableHead>
+                )}
                 <TableHead></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {compareMutation.isPending || isLoadingLocations ? (
-                Array.from({ length: 10 }).map((_, i) => (
+                Array.from({ length: isUSMode ? 8 : 10 }).map((_, i) => (
                   <TableRow key={i}>
-                    {Array.from({ length: 9 }).map((_, j) => (
+                    {Array.from({ length: isUSMode ? 8 : 9 }).map((_, j) => (
                       <TableCell key={j}><Skeleton className="h-6 w-full" /></TableCell>
                     ))}
                   </TableRow>
@@ -133,7 +154,7 @@ export default function Compare() {
                 >
                   <TableCell className="font-medium">
                     <span className="mr-2">{loc.emoji}</span>
-                    {loc.city}, {loc.countryCode}
+                    {loc.city}, {isUSMode ? (US_STATE[loc.locationId] ?? "US") : loc.countryCode}
                   </TableCell>
                   <TableCell>
                     <Badge variant={loc.overallScore > 80 ? "default" : "secondary"}>
@@ -151,13 +172,15 @@ export default function Compare() {
                     {formatCurrency(loc.monthlyDisposableIncomeUSD)}
                   </TableCell>
                   <TableCell>{loc.qualityOfLife.score}/100</TableCell>
-                  <TableCell className="text-center">
-                    {loc.visaInfo.hasDigitalNomadVisa ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 mx-auto" />
-                    ) : (
-                      <XCircle className="w-4 h-4 text-muted-foreground mx-auto" />
-                    )}
-                  </TableCell>
+                  {!isUSMode && (
+                    <TableCell className="text-center">
+                      {loc.visaInfo.hasDigitalNomadVisa ? (
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500 mx-auto" />
+                      ) : (
+                        <XCircle className="w-4 h-4 text-muted-foreground mx-auto" />
+                      )}
+                    </TableCell>
+                  )}
                   <TableCell>
                     <Button variant="ghost" size="sm" className="w-full text-xs">
                       Analyze
