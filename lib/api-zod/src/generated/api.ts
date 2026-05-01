@@ -60,6 +60,20 @@ export const CompareLocationsBody = zod.object({
     .string()
     .optional()
     .describe("Preferred display currency (default USD)"),
+  priorities: zod
+    .array(zod.string())
+    .optional()
+    .describe(
+      "User priorities (low-tax, low-cost, digital-nomad-visa, english-friendly, warm-climate, good-healthcare)",
+    ),
+  workSchedule: zod
+    .string()
+    .optional()
+    .describe("Work schedule, e.g. '9am-5pm PST', 'flexible async'"),
+  teamTimezone: zod
+    .string()
+    .optional()
+    .describe("Primary timezone of the user's team, e.g. 'PST', 'UTC+2'"),
 });
 
 export const CompareLocationsResponse = zod.object({

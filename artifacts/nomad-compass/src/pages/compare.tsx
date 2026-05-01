@@ -14,8 +14,14 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowUpDown, CheckCircle2, XCircle } from "lucide-react";
+import { ArrowUpDown, CheckCircle2, XCircle, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const HOME_CITY_COL: Record<string, number> = {
   "los angeles": 3200, "san francisco": 3900, "new york": 3800,
@@ -43,6 +49,43 @@ const DIFFICULTY_COLOR: Record<number, string> = {
   5: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
 };
 
+function ColHeader({
+  label,
+  tip,
+  sortKey,
+  activeSortCol,
+  onSort,
+  align = "left",
+}: {
+  label: string;
+  tip: string;
+  sortKey: string;
+  activeSortCol: string;
+  onSort: (col: string) => void;
+  align?: "left" | "right" | "center";
+}) {
+  const active = activeSortCol === sortKey;
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          onClick={() => onSort(sortKey)}
+          className={`flex items-center gap-1 w-full ${align === "right" ? "justify-end" : align === "center" ? "justify-center" : "justify-start"} group`}
+        >
+          <span className={`text-xs font-medium ${active ? "text-foreground" : "text-muted-foreground"}`}>
+            {label}
+          </span>
+          <Info className="w-3 h-3 text-muted-foreground/50 group-hover:text-muted-foreground shrink-0" />
+          <ArrowUpDown className={`w-3 h-3 shrink-0 ${active ? "text-primary" : "text-muted-foreground/40"}`} />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="max-w-[220px] text-center leading-snug">
+        {tip}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
 const US_STATE: Record<string, string> = {
   "us-austin": "TX", "us-miami": "FL", "us-denver": "CO",
   "us-nashville": "TN", "us-tampa": "FL", "us-phoenix": "AZ",
@@ -61,22 +104,38 @@ export default function Compare() {
 
   const compareMutation = useCompareLocations();
 
-  useEffect(() => {
-    if (locationsData?.locations && !compareMutation.isPending && !compareMutation.data) {
-      const locationIds = profile.stayInUSA
-        ? locationsData.locations.filter(l => l.countryCode === "US").map(l => l.id)
-        : undefined;
+  // Stable key of all profile fields that should trigger a re-comparison
+  const compareKey = useMemo(() => JSON.stringify({
+    annualIncomeUSD: profile.annualIncomeUSD,
+    employerCountry: profile.employerCountry,
+    employerState: profile.employerState,
+    stayInUSA: profile.stayInUSA,
+    priorities: [...(profile.priorities ?? [])].sort(),
+    workSchedule: profile.workSchedule,
+    teamTimezone: profile.teamTimezone,
+  }), [profile.annualIncomeUSD, profile.employerCountry, profile.employerState,
+       profile.stayInUSA, profile.priorities, profile.workSchedule, profile.teamTimezone]);
 
-      compareMutation.mutate({
-        data: {
-          annualIncomeUSD: profile.annualIncomeUSD,
-          employerCountry: profile.employerCountry,
-          employerState: profile.employerState,
-          locationIds,
-        }
-      });
-    }
-  }, [locationsData, profile, compareMutation]);
+  useEffect(() => {
+    if (!locationsData?.locations || compareMutation.isPending) return;
+
+    const locationIds = profile.stayInUSA
+      ? locationsData.locations.filter(l => l.countryCode === "US").map(l => l.id)
+      : undefined;
+
+    compareMutation.mutate({
+      data: {
+        annualIncomeUSD: profile.annualIncomeUSD,
+        employerCountry: profile.employerCountry,
+        employerState: profile.employerState,
+        locationIds,
+        priorities: profile.priorities ?? [],
+        workSchedule: profile.workSchedule,
+        teamTimezone: profile.teamTimezone,
+      }
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [locationsData, compareKey]);
 
   const handleSort = (col: string) => {
     if (sortCol === col) {
@@ -136,44 +195,45 @@ export default function Compare() {
         </p>
       </div>
 
+      <TooltipProvider delayDuration={300}>
       <div className="bg-card rounded-xl border border-border overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/50">
-                <TableHead className="w-[200px] cursor-pointer" onClick={() => handleSort("city")}>
-                  <div className="flex items-center gap-1">Location <ArrowUpDown className="w-3 h-3" /></div>
+                <TableHead className="w-[200px]">
+                  <ColHeader label="Location" tip="City and country. Click to sort alphabetically." sortKey="city" activeSortCol={sortCol} onSort={handleSort} />
                 </TableHead>
-                <TableHead className="cursor-pointer" onClick={() => handleSort("overallScore")}>
-                  <div className="flex items-center gap-1">Score <ArrowUpDown className="w-3 h-3" /></div>
+                <TableHead>
+                  <ColHeader label="Score" tip="Overall suitability score (0–100) combining taxes, cost of living, quality of life, timezone overlap, and visa options — weighted equally by default, adjusted by your priorities." sortKey="overallScore" activeSortCol={sortCol} onSort={handleSort} />
                 </TableHead>
-                <TableHead className="cursor-pointer text-right" onClick={() => handleSort("effectiveTaxRate")}>
-                  <div className="flex justify-end items-center gap-1">Effective Tax <ArrowUpDown className="w-3 h-3" /></div>
+                <TableHead>
+                  <ColHeader label="Tax Rate" tip="Your effective (all-in) tax rate as a % of gross income — includes local income tax plus any social security you'd owe as a resident. 0% = territorial or zero-tax country." sortKey="effectiveTaxRate" activeSortCol={sortCol} onSort={handleSort} align="right" />
                 </TableHead>
-                <TableHead className="cursor-pointer text-right" onClick={() => handleSort("monthlyNetIncomeUSD")}>
-                  <div className="flex justify-end items-center gap-1">Net/mo <ArrowUpDown className="w-3 h-3" /></div>
+                <TableHead>
+                  <ColHeader label="Net/mo" tip="Monthly take-home pay after all local taxes. This is what actually lands in your bank account each month." sortKey="monthlyNetIncomeUSD" activeSortCol={sortCol} onSort={handleSort} align="right" />
                 </TableHead>
-                <TableHead className="cursor-pointer text-right" onClick={() => handleSort("monthlyCostOfLivingUSD")}>
-                  <div className="flex justify-end items-center gap-1">COL/mo <ArrowUpDown className="w-3 h-3" /></div>
+                <TableHead>
+                  <ColHeader label="Cost/mo" tip="Estimated monthly cost of living: rent (1-bed city center) + food + transport + utilities + other essentials. Excludes travel and entertainment." sortKey="monthlyCostOfLivingUSD" activeSortCol={sortCol} onSort={handleSort} align="right" />
                 </TableHead>
                 {homeCOL !== null && (
-                  <TableHead className="text-right text-muted-foreground/80 whitespace-nowrap">
+                  <TableHead className="text-right text-muted-foreground/80 whitespace-nowrap text-xs">
                     vs. {homeCityLabel}
                   </TableHead>
                 )}
-                <TableHead className="cursor-pointer text-right" onClick={() => handleSort("monthlyDisposableIncomeUSD")}>
-                  <div className="flex justify-end items-center gap-1">Disposable/mo <ArrowUpDown className="w-3 h-3" /></div>
+                <TableHead>
+                  <ColHeader label="Disposable/mo" tip="Money left over each month after taxes AND living costs. The higher this is, the faster you can save, invest, or spend on experiences." sortKey="monthlyDisposableIncomeUSD" activeSortCol={sortCol} onSort={handleSort} align="right" />
                 </TableHead>
-                <TableHead className="cursor-pointer" onClick={() => handleSort("qualityOfLife")}>
-                  <div className="flex items-center gap-1">QoL <ArrowUpDown className="w-3 h-3" /></div>
+                <TableHead>
+                  <ColHeader label="Quality of Life" tip="Quality of life score (0–100) reflecting safety, healthcare quality, climate, and general livability data from public indices." sortKey="qualityOfLife" activeSortCol={sortCol} onSort={handleSort} />
                 </TableHead>
                 {!isUSMode && (
-                  <TableHead className="cursor-pointer text-center" onClick={() => handleSort("hasDigitalNomadVisa")}>
-                    <div className="flex justify-center items-center gap-1">Nomad Visa <ArrowUpDown className="w-3 h-3" /></div>
+                  <TableHead>
+                    <ColHeader label="Nomad Visa" tip="Whether this country offers a dedicated digital nomad or remote worker visa — giving you a legal long-term stay path without a local employer." sortKey="hasDigitalNomadVisa" activeSortCol={sortCol} onSort={handleSort} align="center" />
                   </TableHead>
                 )}
-                <TableHead className="cursor-pointer" onClick={() => handleSort("relocationDifficulty")}>
-                  <div className="flex items-center gap-1">Move Ease <ArrowUpDown className="w-3 h-3" /></div>
+                <TableHead>
+                  <ColHeader label="Move Ease" tip="How straightforward it is to actually relocate and establish legal residency — factoring in bureaucracy, language barriers, banking access, and typical setup time." sortKey="relocationDifficulty" activeSortCol={sortCol} onSort={handleSort} />
                 </TableHead>
                 <TableHead></TableHead>
               </TableRow>
@@ -260,6 +320,7 @@ export default function Compare() {
           </Table>
         </div>
       </div>
+      </TooltipProvider>
 
       <NomadChatbot
         comparisons={compareMutation.data?.comparisons ?? []}

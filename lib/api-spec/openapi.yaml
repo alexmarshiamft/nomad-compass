@@ -181,6 +181,17 @@ components:
         currency:
           type: string
           description: Preferred display currency (default USD)
+        priorities:
+          type: array
+          items:
+            type: string
+          description: User priorities (low-tax, low-cost, digital-nomad-visa, english-friendly, warm-climate, good-healthcare)
+        workSchedule:
+          type: string
+          description: "Work schedule, e.g. '9am-5pm PST', 'flexible async'"
+        teamTimezone:
+          type: string
+          description: "Primary timezone of the user's team, e.g. 'PST', 'UTC+2'"
       required:
         - annualIncomeUSD
         - employerCountry

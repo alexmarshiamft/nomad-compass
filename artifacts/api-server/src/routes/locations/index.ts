@@ -140,9 +140,28 @@ router.post("/locations/compare", async (req, res): Promise<void> => {
     return;
   }
 
-  const { annualIncomeUSD, employerCountry, locationIds } = parsed.data;
+  const { annualIncomeUSD, employerCountry, locationIds, priorities = [] } = parsed.data;
 
   let targetLocations = LOCATIONS;
+
+  // Hard filters for specific priorities
+  if (priorities.includes("digital-nomad-visa")) {
+    const filtered = LOCATIONS.filter((l) => l.visa.hasDigitalNomadVisa);
+    targetLocations = filtered.length >= 5 ? filtered : LOCATIONS;
+  }
+  if (priorities.includes("english-friendly")) {
+    const filtered = targetLocations.filter((l) => l.qol.englishFriendly);
+    targetLocations = filtered.length >= 5 ? filtered : targetLocations;
+  }
+  if (priorities.includes("warm-climate")) {
+    const filtered = targetLocations.filter((l) => l.qol.climateScore >= 65);
+    targetLocations = filtered.length >= 5 ? filtered : targetLocations;
+  }
+  if (priorities.includes("good-healthcare")) {
+    const filtered = targetLocations.filter((l) => l.qol.healthcareIndex >= 60);
+    targetLocations = filtered.length >= 5 ? filtered : targetLocations;
+  }
+
   if (locationIds && locationIds.length > 0) {
     targetLocations = locationIds
       .map((id) => getLocationById(id))
@@ -155,7 +174,30 @@ router.post("/locations/compare", async (req, res): Promise<void> => {
 
   const comparisons = targetLocations
     .map((loc) => buildLocationComparison(loc, annualIncomeUSD, employerCountry))
-    .sort((a, b) => b.overallScore - a.overallScore);
+    .sort((a, b) => {
+      let scoreA = a.overallScore;
+      let scoreB = b.overallScore;
+      // Score bonuses for priorities (used only for ranking, not mutating the stored score)
+      if (priorities.includes("low-tax")) {
+        scoreA += (1 - a.effectiveTaxRate) * 20;
+        scoreB += (1 - b.effectiveTaxRate) * 20;
+      }
+      if (priorities.includes("low-cost")) {
+        const ratioA = a.monthlyNetIncomeUSD > 0 ? Math.max(0, a.monthlyDisposableIncomeUSD) / a.monthlyNetIncomeUSD : 0;
+        const ratioB = b.monthlyNetIncomeUSD > 0 ? Math.max(0, b.monthlyDisposableIncomeUSD) / b.monthlyNetIncomeUSD : 0;
+        scoreA += ratioA * 15;
+        scoreB += ratioB * 15;
+      }
+      if (priorities.includes("good-healthcare")) {
+        scoreA += (a.qualityOfLife.healthcareIndex / 100) * 10;
+        scoreB += (b.qualityOfLife.healthcareIndex / 100) * 10;
+      }
+      if (priorities.includes("warm-climate")) {
+        scoreA += (a.qualityOfLife.climateScore / 100) * 10;
+        scoreB += (b.qualityOfLife.climateScore / 100) * 10;
+      }
+      return scoreB - scoreA;
+    });
 
   res.json(
     CompareLocationsResponse.parse({

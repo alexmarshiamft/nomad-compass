@@ -31,6 +31,12 @@ export interface CompareLocationsBody {
   locationIds?: string[];
   /** Preferred display currency (default USD) */
   currency?: string;
+  /** User priorities (low-tax, low-cost, digital-nomad-visa, english-friendly, warm-climate, good-healthcare) */
+  priorities?: string[];
+  /** Work schedule, e.g. '9am-5pm PST', 'flexible async' */
+  workSchedule?: string;
+  /** Primary timezone of the user's team, e.g. 'PST', 'UTC+2' */
+  teamTimezone?: string;
 }
 
 export interface TaxDetails {
