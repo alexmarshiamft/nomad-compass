@@ -15,8 +15,9 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<UserProfile>({
-    annualIncomeUSD: 100000,
+    annualIncomeUSD: 50000,
     employerCountry: "US",
+    employerState: "CA",
   });
 
   return (
