@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useLocation } from "wouter";
 import { useListLocations, useCompareLocations, getListLocationsQueryKey } from "@workspace/api-client-react";
 import { useUser } from "@/lib/user-context";
+import NomadChatbot from "@/components/NomadChatbot";
 import { formatCurrency, formatPercent } from "@/lib/format";
 import {
   Table,
@@ -259,6 +260,14 @@ export default function Compare() {
           </Table>
         </div>
       </div>
+
+      <NomadChatbot
+        comparisons={compareMutation.data?.comparisons ?? []}
+        annualIncomeUSD={profile.annualIncomeUSD}
+        employerCountry={profile.employerCountry}
+        employerCity={profile.employerCity || "Los Angeles, CA"}
+        homeCityCOL={homeCOL}
+      />
     </div>
   );
 }

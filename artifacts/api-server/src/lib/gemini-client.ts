@@ -96,6 +96,82 @@ INSIGHTS: ["insight 1", "insight 2", "insight 3"]`;
   return { aiSummary, keyInsights };
 }
 
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export interface ChatContext {
+  annualIncomeUSD: number;
+  employerCountry: string;
+  employerCity: string;
+  homeCityCOL: number | null;
+  comparisons: Array<{
+    city: string;
+    country: string;
+    emoji: string;
+    overallScore: number;
+    effectiveTaxRate: number;
+    monthlyNetIncomeUSD: number;
+    monthlyCostOfLivingUSD: number;
+    monthlyDisposableIncomeUSD: number;
+    hasDigitalNomadVisa: boolean;
+    setupDifficultyLabel: string;
+    touristVisaDays: number;
+    pros: string[];
+    cons: string[];
+  }>;
+}
+
+export async function generateChatReply(
+  userMessage: string,
+  history: ChatMessage[],
+  context: ChatContext
+): Promise<string> {
+  const apiKey = process.env["GEMINI_API_KEY"];
+  if (!apiKey) {
+    throw new Error("GEMINI_API_KEY secret is not set.");
+  }
+  const client = getGeminiClient();
+
+  const colLine = context.homeCityCOL
+    ? `Current home city: ${context.employerCity} (~$${context.homeCityCOL.toLocaleString()}/mo COL).`
+    : `Current home city: ${context.employerCity}.`;
+
+  const cityList = context.comparisons
+    .map(
+      (c) =>
+        `- ${c.emoji} ${c.city}, ${c.country}: Score ${c.overallScore}/100 | Tax ${(c.effectiveTaxRate * 100).toFixed(1)}% | Net $${c.monthlyNetIncomeUSD.toLocaleString()}/mo | COL $${c.monthlyCostOfLivingUSD.toLocaleString()}/mo | Disposable $${c.monthlyDisposableIncomeUSD.toLocaleString()}/mo | Nomad Visa: ${c.hasDigitalNomadVisa ? "Yes" : "No"} | Move: ${c.setupDifficultyLabel} | Visa-free: ${c.touristVisaDays}d | Pros: ${c.pros.slice(0, 2).join(", ")} | Cons: ${c.cons.slice(0, 1).join(", ")}`
+    )
+    .join("\n");
+
+  const systemInstruction = `You are Nomad Compass AI, an expert relocation advisor for remote workers. You have real-time access to the user's comparison data. Be concise, direct, and practical. Use specific numbers from the data. Don't repeat the full table — highlight what's most relevant to the question.
+
+User Profile:
+- Annual Income: $${context.annualIncomeUSD.toLocaleString()} USD
+- Employer Country: ${context.employerCountry}
+- ${colLine}
+
+Current comparison data (${context.comparisons.length} cities):
+${cityList}
+
+Answer questions about this data, help the user decide between options, explain trade-offs, and give personalized recommendations. Keep responses under 200 words unless the user asks for detail. Use markdown bullet points where helpful.`;
+
+  const model = client.getGenerativeModel({
+    model: "gemini-2.5-flash",
+    systemInstruction,
+  });
+
+  const geminiHistory = history.map((m) => ({
+    role: m.role === "assistant" ? ("model" as const) : ("user" as const),
+    parts: [{ text: m.content }],
+  }));
+
+  const chat = model.startChat({ history: geminiHistory });
+  const result = await chat.sendMessage(userMessage);
+  return result.response.text();
+}
+
 export async function generateTaxAnalysis(params: {
   city: string;
   country: string;
