@@ -65,42 +65,25 @@ export default function Home() {
   return (
     <div>
       {/* ── Hero with video background ── */}
-      <section className="relative min-h-screen flex items-center overflow-hidden">
-        {/* Video iframe — fills the section */}
-        <iframe
-          src="/nomad-compass-hero/"
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{ border: "none" }}
-          title="Nomad Compass hero video"
-          aria-hidden="true"
-          tabIndex={-1}
-        />
+      <section className="flex min-h-screen flex-col lg:flex-row overflow-hidden">
 
-        {/* Dark gradient overlay so content stays readable */}
+        {/* ── Left panel: solid dark, fully readable ── */}
         <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to right, rgba(11,17,32,0.85) 0%, rgba(11,17,32,0.70) 55%, rgba(11,17,32,0.20) 100%)",
-          }}
-        />
+          className="flex flex-col justify-center w-full lg:w-[52%] bg-[#0B1120] px-8 md:px-14 py-14 lg:py-20 shrink-0"
+        >
+          <p className="text-amber-400 text-sm font-semibold tracking-widest uppercase mb-4">
+            Global Location Optimizer
+          </p>
+          <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-white mb-5 leading-tight">
+            Live Better.<br />Keep More.
+          </h1>
+          <p className="text-base text-white/60 mb-8 leading-relaxed max-w-sm">
+            Data-driven tax and cost-of-living analysis across 38+ cities.
+            Find out exactly where your remote salary goes furthest.
+          </p>
 
-        {/* Content */}
-        <div className="relative z-10 container mx-auto px-6 py-20 max-w-6xl">
-          <div className="max-w-xl">
-            <p className="text-amber-400 text-sm font-semibold tracking-widest uppercase mb-4">
-              Global Location Optimizer
-            </p>
-            <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-white mb-6 leading-tight">
-              Live Better.<br />Keep More.
-            </h1>
-            <p className="text-lg text-white/70 mb-10 leading-relaxed">
-              Data-driven tax and cost-of-living analysis across 38+ cities.
-              Find out exactly where your remote salary goes furthest.
-            </p>
-
-            {/* Form card */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-2xl">
+          {/* Form card */}
+          <div className="bg-white/[0.07] border border-white/10 rounded-2xl p-5 shadow-xl">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
                   <div className="grid sm:grid-cols-2 gap-4">
@@ -244,8 +227,42 @@ export default function Home() {
                 </form>
               </Form>
             </div>
-          </div>
+          {/* end left panel */}
         </div>
+
+        {/* ── Right panel: video, unobstructed ── */}
+        <div className="hidden lg:block flex-1 relative bg-[#060c18]">
+          <iframe
+            src="/nomad-compass-hero/"
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            style={{ border: "none" }}
+            title="Nomad Compass hero video"
+            aria-hidden="true"
+            tabIndex={-1}
+          />
+          {/* Thin vertical fade on the left edge to blend into the panel */}
+          <div
+            className="absolute inset-y-0 left-0 w-16 pointer-events-none"
+            style={{ background: "linear-gradient(to right, #0B1120, transparent)" }}
+          />
+        </div>
+
+        {/* Mobile-only: compact video banner above the fold */}
+        <div className="block lg:hidden w-full h-56 relative bg-[#060c18] order-first">
+          <iframe
+            src="/nomad-compass-hero/"
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            style={{ border: "none" }}
+            title="Nomad Compass hero video"
+            aria-hidden="true"
+            tabIndex={-1}
+          />
+          <div
+            className="absolute inset-x-0 bottom-0 h-16 pointer-events-none"
+            style={{ background: "linear-gradient(to bottom, transparent, #0B1120)" }}
+          />
+        </div>
+
       </section>
 
       {/* ── Stats strip below hero ── */}
