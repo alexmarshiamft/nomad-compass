@@ -168,7 +168,7 @@ export default function Home() {
                   Live Better.<br />Keep More.
                 </h1>
                 <p className="text-base text-white/60 mb-8 leading-relaxed max-w-sm">
-                  Data-driven tax and cost-of-living analysis across 38+ cities.
+                  Data-driven tax and cost-of-living analysis across every major region on earth.
                   Find out exactly where your remote salary goes furthest.
                 </p>
 
