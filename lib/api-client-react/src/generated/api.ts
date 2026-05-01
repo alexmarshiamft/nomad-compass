@@ -5,18 +5,31 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
+  MutationFunction,
   QueryFunction,
   QueryKey,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult,
 } from "@tanstack/react-query";
 
-import type { HealthStatus } from "./api.schemas";
+import type {
+  CompareLocationsBody,
+  ComparisonResult,
+  HealthStatus,
+  ListLocations200,
+  LocationStats,
+  RecommendationsBody,
+  RecommendationsResult,
+  TaxAnalysisBody,
+  TaxAnalysisResult,
+} from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
-import type { ErrorType } from "../custom-fetch";
+import type { ErrorType, BodyType } from "../custom-fetch";
 
 type AwaitedInput<T> = PromiseLike<T> | T;
 
@@ -92,6 +105,419 @@ export function useHealthCheck<
   request?: SecondParameter<typeof customFetch>;
 }): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getHealthCheckQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * Returns the full list of supported cities and countries for comparison
+ * @summary List all available locations
+ */
+export const getListLocationsUrl = () => {
+  return `/api/locations`;
+};
+
+export const listLocations = async (
+  options?: RequestInit,
+): Promise<ListLocations200> => {
+  return customFetch<ListLocations200>(getListLocationsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListLocationsQueryKey = () => {
+  return [`/api/locations`] as const;
+};
+
+export const getListLocationsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listLocations>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listLocations>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListLocationsQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listLocations>>> = ({
+    signal,
+  }) => listLocations({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listLocations>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListLocationsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listLocations>>
+>;
+export type ListLocationsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List all available locations
+ */
+
+export function useListLocations<
+  TData = Awaited<ReturnType<typeof listLocations>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listLocations>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListLocationsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * Given income and employer location, returns ranked comparison of selected cities/countries
+ * @summary Compare locations for a remote worker
+ */
+export const getCompareLocationsUrl = () => {
+  return `/api/locations/compare`;
+};
+
+export const compareLocations = async (
+  compareLocationsBody: CompareLocationsBody,
+  options?: RequestInit,
+): Promise<ComparisonResult> => {
+  return customFetch<ComparisonResult>(getCompareLocationsUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(compareLocationsBody),
+  });
+};
+
+export const getCompareLocationsMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof compareLocations>>,
+    TError,
+    { data: BodyType<CompareLocationsBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof compareLocations>>,
+  TError,
+  { data: BodyType<CompareLocationsBody> },
+  TContext
+> => {
+  const mutationKey = ["compareLocations"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof compareLocations>>,
+    { data: BodyType<CompareLocationsBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return compareLocations(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CompareLocationsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof compareLocations>>
+>;
+export type CompareLocationsMutationBody = BodyType<CompareLocationsBody>;
+export type CompareLocationsMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Compare locations for a remote worker
+ */
+export const useCompareLocations = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof compareLocations>>,
+    TError,
+    { data: BodyType<CompareLocationsBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof compareLocations>>,
+  TError,
+  { data: BodyType<CompareLocationsBody> },
+  TContext
+> => {
+  return useMutation(getCompareLocationsMutationOptions(options));
+};
+
+/**
+ * Returns top recommended locations based on income, employer, and preferences, powered by Gemini
+ * @summary Get AI-powered top recommendations
+ */
+export const getGetRecommendationsUrl = () => {
+  return `/api/locations/recommendations`;
+};
+
+export const getRecommendations = async (
+  recommendationsBody: RecommendationsBody,
+  options?: RequestInit,
+): Promise<RecommendationsResult> => {
+  return customFetch<RecommendationsResult>(getGetRecommendationsUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(recommendationsBody),
+  });
+};
+
+export const getGetRecommendationsMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof getRecommendations>>,
+    TError,
+    { data: BodyType<RecommendationsBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof getRecommendations>>,
+  TError,
+  { data: BodyType<RecommendationsBody> },
+  TContext
+> => {
+  const mutationKey = ["getRecommendations"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof getRecommendations>>,
+    { data: BodyType<RecommendationsBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return getRecommendations(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type GetRecommendationsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof getRecommendations>>
+>;
+export type GetRecommendationsMutationBody = BodyType<RecommendationsBody>;
+export type GetRecommendationsMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Get AI-powered top recommendations
+ */
+export const useGetRecommendations = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof getRecommendations>>,
+    TError,
+    { data: BodyType<RecommendationsBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof getRecommendations>>,
+  TError,
+  { data: BodyType<RecommendationsBody> },
+  TContext
+> => {
+  return useMutation(getGetRecommendationsMutationOptions(options));
+};
+
+/**
+ * Returns detailed tax breakdown, treaty information, and net take-home for one location
+ * @summary Deep-dive tax analysis for a specific location
+ */
+export const getGetTaxAnalysisUrl = () => {
+  return `/api/locations/tax-analysis`;
+};
+
+export const getTaxAnalysis = async (
+  taxAnalysisBody: TaxAnalysisBody,
+  options?: RequestInit,
+): Promise<TaxAnalysisResult> => {
+  return customFetch<TaxAnalysisResult>(getGetTaxAnalysisUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(taxAnalysisBody),
+  });
+};
+
+export const getGetTaxAnalysisMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof getTaxAnalysis>>,
+    TError,
+    { data: BodyType<TaxAnalysisBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof getTaxAnalysis>>,
+  TError,
+  { data: BodyType<TaxAnalysisBody> },
+  TContext
+> => {
+  const mutationKey = ["getTaxAnalysis"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof getTaxAnalysis>>,
+    { data: BodyType<TaxAnalysisBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return getTaxAnalysis(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type GetTaxAnalysisMutationResult = NonNullable<
+  Awaited<ReturnType<typeof getTaxAnalysis>>
+>;
+export type GetTaxAnalysisMutationBody = BodyType<TaxAnalysisBody>;
+export type GetTaxAnalysisMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Deep-dive tax analysis for a specific location
+ */
+export const useGetTaxAnalysis = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof getTaxAnalysis>>,
+    TError,
+    { data: BodyType<TaxAnalysisBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof getTaxAnalysis>>,
+  TError,
+  { data: BodyType<TaxAnalysisBody> },
+  TContext
+> => {
+  return useMutation(getGetTaxAnalysisMutationOptions(options));
+};
+
+/**
+ * Returns aggregate stats across all supported locations
+ * @summary Global summary stats
+ */
+export const getGetLocationStatsUrl = () => {
+  return `/api/locations/stats`;
+};
+
+export const getLocationStats = async (
+  options?: RequestInit,
+): Promise<LocationStats> => {
+  return customFetch<LocationStats>(getGetLocationStatsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetLocationStatsQueryKey = () => {
+  return [`/api/locations/stats`] as const;
+};
+
+export const getGetLocationStatsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getLocationStats>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getLocationStats>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetLocationStatsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getLocationStats>>
+  > = ({ signal }) => getLocationStats({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getLocationStats>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetLocationStatsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getLocationStats>>
+>;
+export type GetLocationStatsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Global summary stats
+ */
+
+export function useGetLocationStats<
+  TData = Awaited<ReturnType<typeof getLocationStats>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getLocationStats>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetLocationStatsQueryOptions(options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

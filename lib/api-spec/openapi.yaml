@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: locations
+    description: Location comparison and analysis
 paths:
   /healthz:
     get:
@@ -24,6 +26,102 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /locations:
+    get:
+      operationId: listLocations
+      tags: [locations]
+      summary: List all available locations
+      description: Returns the full list of supported cities and countries for comparison
+      responses:
+        "200":
+          description: List of locations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  locations:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LocationSummary"
+                required:
+                  - locations
+
+  /locations/compare:
+    post:
+      operationId: compareLocations
+      tags: [locations]
+      summary: Compare locations for a remote worker
+      description: Given income and employer location, returns ranked comparison of selected cities/countries
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompareLocationsBody"
+      responses:
+        "200":
+          description: Comparison results ranked by suitability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComparisonResult"
+
+  /locations/recommendations:
+    post:
+      operationId: getRecommendations
+      tags: [locations]
+      summary: Get AI-powered top recommendations
+      description: Returns top recommended locations based on income, employer, and preferences, powered by Gemini
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecommendationsBody"
+      responses:
+        "200":
+          description: Top location recommendations with AI reasoning
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecommendationsResult"
+
+  /locations/tax-analysis:
+    post:
+      operationId: getTaxAnalysis
+      tags: [locations]
+      summary: Deep-dive tax analysis for a specific location
+      description: Returns detailed tax breakdown, treaty information, and net take-home for one location
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaxAnalysisBody"
+      responses:
+        "200":
+          description: Detailed tax analysis
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaxAnalysisResult"
+
+  /locations/stats:
+    get:
+      operationId: getLocationStats
+      tags: [locations]
+      summary: Global summary stats
+      description: Returns aggregate stats across all supported locations
+      responses:
+        "200":
+          description: Summary stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LocationStats"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +132,390 @@ components:
       required:
         - status
 
+    LocationSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        countryCode:
+          type: string
+        region:
+          type: string
+        emoji:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+          description: e.g. ["digital-nomad-visa", "low-tax", "warm-climate"]
+      required:
+        - id
+        - city
+        - country
+        - countryCode
+        - region
+        - emoji
+        - tags
+
+    CompareLocationsBody:
+      type: object
+      properties:
+        annualIncomeUSD:
+          type: number
+          description: Annual income in USD
+        employerCountry:
+          type: string
+          description: ISO country code of employer (e.g. "US", "DE")
+        employerState:
+          type: string
+          description: State/province of employer (optional, for US etc.)
+        locationIds:
+          type: array
+          items:
+            type: string
+          description: List of location IDs to compare (empty = compare all top picks)
+        currency:
+          type: string
+          description: Preferred display currency (default USD)
+      required:
+        - annualIncomeUSD
+        - employerCountry
+
+    ComparisonResult:
+      type: object
+      properties:
+        comparisons:
+          type: array
+          items:
+            $ref: "#/components/schemas/LocationComparison"
+        employerCountry:
+          type: string
+        annualIncomeUSD:
+          type: number
+      required:
+        - comparisons
+        - employerCountry
+        - annualIncomeUSD
+
+    LocationComparison:
+      type: object
+      properties:
+        locationId:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        countryCode:
+          type: string
+        emoji:
+          type: string
+        overallScore:
+          type: number
+          description: 0-100 overall suitability score
+        effectiveTaxRate:
+          type: number
+          description: Effective income tax rate as decimal (0.0 - 1.0)
+        annualTaxUSD:
+          type: number
+        monthlyNetIncomeUSD:
+          type: number
+          description: After tax, before living costs
+        monthlyCostOfLivingUSD:
+          type: number
+        monthlyDisposableIncomeUSD:
+          type: number
+          description: After tax and cost of living
+        taxDetails:
+          $ref: "#/components/schemas/TaxDetails"
+        livingDetails:
+          $ref: "#/components/schemas/LivingDetails"
+        qualityOfLife:
+          $ref: "#/components/schemas/QualityOfLifeDetails"
+        visaInfo:
+          $ref: "#/components/schemas/VisaInfo"
+        pros:
+          type: array
+          items:
+            type: string
+        cons:
+          type: array
+          items:
+            type: string
+      required:
+        - locationId
+        - city
+        - country
+        - countryCode
+        - emoji
+        - overallScore
+        - effectiveTaxRate
+        - annualTaxUSD
+        - monthlyNetIncomeUSD
+        - monthlyCostOfLivingUSD
+        - monthlyDisposableIncomeUSD
+        - taxDetails
+        - livingDetails
+        - qualityOfLife
+        - visaInfo
+        - pros
+        - cons
+
+    TaxDetails:
+      type: object
+      properties:
+        incomeTaxRate:
+          type: number
+        socialSecurityRate:
+          type: number
+        hasTaxTreaty:
+          type: boolean
+        taxTreatyCountries:
+          type: array
+          items:
+            type: string
+        taxResidencyNotes:
+          type: string
+        remoteWorkerTaxRegime:
+          type: string
+          description: Special tax regimes for remote workers (e.g. NHR, Beckham law)
+        annualIncomeTaxUSD:
+          type: number
+        annualSocialSecurityUSD:
+          type: number
+      required:
+        - incomeTaxRate
+        - socialSecurityRate
+        - hasTaxTreaty
+        - taxTreatyCountries
+        - taxResidencyNotes
+        - annualIncomeTaxUSD
+        - annualSocialSecurityUSD
+
+    LivingDetails:
+      type: object
+      properties:
+        monthlyRentUSD:
+          type: number
+          description: 1-bedroom apartment in city center
+        monthlyFoodUSD:
+          type: number
+        monthlyTransportUSD:
+          type: number
+        monthlyUtilitiesUSD:
+          type: number
+        monthlyOtherUSD:
+          type: number
+        colIndex:
+          type: number
+          description: Cost of living index (NYC=100)
+        internetSpeedMbps:
+          type: number
+        coworkingDayPassUSD:
+          type: number
+      required:
+        - monthlyRentUSD
+        - monthlyFoodUSD
+        - monthlyTransportUSD
+        - monthlyUtilitiesUSD
+        - monthlyOtherUSD
+        - colIndex
+        - internetSpeedMbps
+
+    QualityOfLifeDetails:
+      type: object
+      properties:
+        score:
+          type: number
+          description: 0-100
+        safetyIndex:
+          type: number
+        healthcareIndex:
+          type: number
+        climateScore:
+          type: number
+        englishFriendly:
+          type: boolean
+        timeZone:
+          type: string
+        timeZoneOffsetHours:
+          type: number
+        timeZoneCompatibilityScore:
+          type: number
+          description: How compatible the timezone is with employer timezone (0-100)
+      required:
+        - score
+        - safetyIndex
+        - healthcareIndex
+        - climateScore
+        - englishFriendly
+        - timeZone
+        - timeZoneOffsetHours
+        - timeZoneCompatibilityScore
+
+    VisaInfo:
+      type: object
+      properties:
+        hasDigitalNomadVisa:
+          type: boolean
+        visaName:
+          type: string
+        visaRequirements:
+          type: string
+        maxStayDays:
+          type: number
+        visaFeeUSD:
+          type: number
+        citizenshipPathYears:
+          type: number
+      required:
+        - hasDigitalNomadVisa
+
+    RecommendationsBody:
+      type: object
+      properties:
+        annualIncomeUSD:
+          type: number
+        employerCountry:
+          type: string
+        employerState:
+          type: string
+        priorities:
+          type: array
+          items:
+            type: string
+          description: e.g. ["low-tax", "warm-climate", "english-friendly", "digital-nomad-visa", "low-cost"]
+        currentCountry:
+          type: string
+          description: User's current country of residence
+      required:
+        - annualIncomeUSD
+        - employerCountry
+
+    RecommendationsResult:
+      type: object
+      properties:
+        topPicks:
+          type: array
+          items:
+            $ref: "#/components/schemas/LocationComparison"
+        aiSummary:
+          type: string
+          description: Gemini-generated personalized summary and reasoning
+        keyInsights:
+          type: array
+          items:
+            type: string
+      required:
+        - topPicks
+        - aiSummary
+        - keyInsights
+
+    TaxAnalysisBody:
+      type: object
+      properties:
+        locationId:
+          type: string
+        annualIncomeUSD:
+          type: number
+        employerCountry:
+          type: string
+        employerState:
+          type: string
+        incomeType:
+          type: string
+          description: "employment, freelance, or contractor"
+      required:
+        - locationId
+        - annualIncomeUSD
+        - employerCountry
+
+    TaxAnalysisResult:
+      type: object
+      properties:
+        locationId:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        annualIncomeUSD:
+          type: number
+        effectiveTaxRate:
+          type: number
+        annualTaxUSD:
+          type: number
+        monthlyNetUSD:
+          type: number
+        taxBreakdown:
+          type: array
+          items:
+            $ref: "#/components/schemas/TaxLineItem"
+        aiAnalysis:
+          type: string
+          description: Gemini-generated detailed tax explanation
+        optimizationTips:
+          type: array
+          items:
+            type: string
+        warnings:
+          type: array
+          items:
+            type: string
+      required:
+        - locationId
+        - city
+        - country
+        - annualIncomeUSD
+        - effectiveTaxRate
+        - annualTaxUSD
+        - monthlyNetUSD
+        - taxBreakdown
+        - aiAnalysis
+        - optimizationTips
+        - warnings
+
+    TaxLineItem:
+      type: object
+      properties:
+        label:
+          type: string
+        rate:
+          type: number
+        annualAmountUSD:
+          type: number
+        notes:
+          type: string
+      required:
+        - label
+        - rate
+        - annualAmountUSD
+
+    LocationStats:
+      type: object
+      properties:
+        totalLocations:
+          type: number
+        locationsWithNomadVisa:
+          type: number
+        lowestTaxLocation:
+          type: string
+        highestQolLocation:
+          type: string
+        cheapestLocation:
+          type: string
+        regions:
+          type: array
+          items:
+            type: string
+      required:
+        - totalLocations
+        - locationsWithNomadVisa
+        - lowestTaxLocation
+        - highestQolLocation
+        - cheapestLocation
+        - regions

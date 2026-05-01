@@ -14,3 +14,277 @@ import * as zod from "zod";
 export const HealthCheckResponse = zod.object({
   status: zod.string(),
 });
+
+/**
+ * Returns the full list of supported cities and countries for comparison
+ * @summary List all available locations
+ */
+export const ListLocationsResponse = zod.object({
+  locations: zod.array(
+    zod.object({
+      id: zod.string(),
+      city: zod.string(),
+      country: zod.string(),
+      countryCode: zod.string(),
+      region: zod.string(),
+      emoji: zod.string(),
+      tags: zod
+        .array(zod.string())
+        .describe(
+          'e.g. [\"digital-nomad-visa\", \"low-tax\", \"warm-climate\"]',
+        ),
+    }),
+  ),
+});
+
+/**
+ * Given income and employer location, returns ranked comparison of selected cities/countries
+ * @summary Compare locations for a remote worker
+ */
+export const CompareLocationsBody = zod.object({
+  annualIncomeUSD: zod.number().describe("Annual income in USD"),
+  employerCountry: zod
+    .string()
+    .describe('ISO country code of employer (e.g. \"US\", \"DE\")'),
+  employerState: zod
+    .string()
+    .optional()
+    .describe("State\/province of employer (optional, for US etc.)"),
+  locationIds: zod
+    .array(zod.string())
+    .optional()
+    .describe(
+      "List of location IDs to compare (empty = compare all top picks)",
+    ),
+  currency: zod
+    .string()
+    .optional()
+    .describe("Preferred display currency (default USD)"),
+});
+
+export const CompareLocationsResponse = zod.object({
+  comparisons: zod.array(
+    zod.object({
+      locationId: zod.string(),
+      city: zod.string(),
+      country: zod.string(),
+      countryCode: zod.string(),
+      emoji: zod.string(),
+      overallScore: zod.number().describe("0-100 overall suitability score"),
+      effectiveTaxRate: zod
+        .number()
+        .describe("Effective income tax rate as decimal (0.0 - 1.0)"),
+      annualTaxUSD: zod.number(),
+      monthlyNetIncomeUSD: zod
+        .number()
+        .describe("After tax, before living costs"),
+      monthlyCostOfLivingUSD: zod.number(),
+      monthlyDisposableIncomeUSD: zod
+        .number()
+        .describe("After tax and cost of living"),
+      taxDetails: zod.object({
+        incomeTaxRate: zod.number(),
+        socialSecurityRate: zod.number(),
+        hasTaxTreaty: zod.boolean(),
+        taxTreatyCountries: zod.array(zod.string()),
+        taxResidencyNotes: zod.string(),
+        remoteWorkerTaxRegime: zod
+          .string()
+          .optional()
+          .describe(
+            "Special tax regimes for remote workers (e.g. NHR, Beckham law)",
+          ),
+        annualIncomeTaxUSD: zod.number(),
+        annualSocialSecurityUSD: zod.number(),
+      }),
+      livingDetails: zod.object({
+        monthlyRentUSD: zod
+          .number()
+          .describe("1-bedroom apartment in city center"),
+        monthlyFoodUSD: zod.number(),
+        monthlyTransportUSD: zod.number(),
+        monthlyUtilitiesUSD: zod.number(),
+        monthlyOtherUSD: zod.number(),
+        colIndex: zod.number().describe("Cost of living index (NYC=100)"),
+        internetSpeedMbps: zod.number(),
+        coworkingDayPassUSD: zod.number().optional(),
+      }),
+      qualityOfLife: zod.object({
+        score: zod.number().describe("0-100"),
+        safetyIndex: zod.number(),
+        healthcareIndex: zod.number(),
+        climateScore: zod.number(),
+        englishFriendly: zod.boolean(),
+        timeZone: zod.string(),
+        timeZoneOffsetHours: zod.number(),
+        timeZoneCompatibilityScore: zod
+          .number()
+          .describe(
+            "How compatible the timezone is with employer timezone (0-100)",
+          ),
+      }),
+      visaInfo: zod.object({
+        hasDigitalNomadVisa: zod.boolean(),
+        visaName: zod.string().optional(),
+        visaRequirements: zod.string().optional(),
+        maxStayDays: zod.number().optional(),
+        visaFeeUSD: zod.number().optional(),
+        citizenshipPathYears: zod.number().optional(),
+      }),
+      pros: zod.array(zod.string()),
+      cons: zod.array(zod.string()),
+    }),
+  ),
+  employerCountry: zod.string(),
+  annualIncomeUSD: zod.number(),
+});
+
+/**
+ * Returns top recommended locations based on income, employer, and preferences, powered by Gemini
+ * @summary Get AI-powered top recommendations
+ */
+export const GetRecommendationsBody = zod.object({
+  annualIncomeUSD: zod.number(),
+  employerCountry: zod.string(),
+  employerState: zod.string().optional(),
+  priorities: zod
+    .array(zod.string())
+    .optional()
+    .describe(
+      'e.g. [\"low-tax\", \"warm-climate\", \"english-friendly\", \"digital-nomad-visa\", \"low-cost\"]',
+    ),
+  currentCountry: zod
+    .string()
+    .optional()
+    .describe("User's current country of residence"),
+});
+
+export const GetRecommendationsResponse = zod.object({
+  topPicks: zod.array(
+    zod.object({
+      locationId: zod.string(),
+      city: zod.string(),
+      country: zod.string(),
+      countryCode: zod.string(),
+      emoji: zod.string(),
+      overallScore: zod.number().describe("0-100 overall suitability score"),
+      effectiveTaxRate: zod
+        .number()
+        .describe("Effective income tax rate as decimal (0.0 - 1.0)"),
+      annualTaxUSD: zod.number(),
+      monthlyNetIncomeUSD: zod
+        .number()
+        .describe("After tax, before living costs"),
+      monthlyCostOfLivingUSD: zod.number(),
+      monthlyDisposableIncomeUSD: zod
+        .number()
+        .describe("After tax and cost of living"),
+      taxDetails: zod.object({
+        incomeTaxRate: zod.number(),
+        socialSecurityRate: zod.number(),
+        hasTaxTreaty: zod.boolean(),
+        taxTreatyCountries: zod.array(zod.string()),
+        taxResidencyNotes: zod.string(),
+        remoteWorkerTaxRegime: zod
+          .string()
+          .optional()
+          .describe(
+            "Special tax regimes for remote workers (e.g. NHR, Beckham law)",
+          ),
+        annualIncomeTaxUSD: zod.number(),
+        annualSocialSecurityUSD: zod.number(),
+      }),
+      livingDetails: zod.object({
+        monthlyRentUSD: zod
+          .number()
+          .describe("1-bedroom apartment in city center"),
+        monthlyFoodUSD: zod.number(),
+        monthlyTransportUSD: zod.number(),
+        monthlyUtilitiesUSD: zod.number(),
+        monthlyOtherUSD: zod.number(),
+        colIndex: zod.number().describe("Cost of living index (NYC=100)"),
+        internetSpeedMbps: zod.number(),
+        coworkingDayPassUSD: zod.number().optional(),
+      }),
+      qualityOfLife: zod.object({
+        score: zod.number().describe("0-100"),
+        safetyIndex: zod.number(),
+        healthcareIndex: zod.number(),
+        climateScore: zod.number(),
+        englishFriendly: zod.boolean(),
+        timeZone: zod.string(),
+        timeZoneOffsetHours: zod.number(),
+        timeZoneCompatibilityScore: zod
+          .number()
+          .describe(
+            "How compatible the timezone is with employer timezone (0-100)",
+          ),
+      }),
+      visaInfo: zod.object({
+        hasDigitalNomadVisa: zod.boolean(),
+        visaName: zod.string().optional(),
+        visaRequirements: zod.string().optional(),
+        maxStayDays: zod.number().optional(),
+        visaFeeUSD: zod.number().optional(),
+        citizenshipPathYears: zod.number().optional(),
+      }),
+      pros: zod.array(zod.string()),
+      cons: zod.array(zod.string()),
+    }),
+  ),
+  aiSummary: zod
+    .string()
+    .describe("Gemini-generated personalized summary and reasoning"),
+  keyInsights: zod.array(zod.string()),
+});
+
+/**
+ * Returns detailed tax breakdown, treaty information, and net take-home for one location
+ * @summary Deep-dive tax analysis for a specific location
+ */
+export const GetTaxAnalysisBody = zod.object({
+  locationId: zod.string(),
+  annualIncomeUSD: zod.number(),
+  employerCountry: zod.string(),
+  employerState: zod.string().optional(),
+  incomeType: zod
+    .string()
+    .optional()
+    .describe("employment, freelance, or contractor"),
+});
+
+export const GetTaxAnalysisResponse = zod.object({
+  locationId: zod.string(),
+  city: zod.string(),
+  country: zod.string(),
+  annualIncomeUSD: zod.number(),
+  effectiveTaxRate: zod.number(),
+  annualTaxUSD: zod.number(),
+  monthlyNetUSD: zod.number(),
+  taxBreakdown: zod.array(
+    zod.object({
+      label: zod.string(),
+      rate: zod.number(),
+      annualAmountUSD: zod.number(),
+      notes: zod.string().optional(),
+    }),
+  ),
+  aiAnalysis: zod
+    .string()
+    .describe("Gemini-generated detailed tax explanation"),
+  optimizationTips: zod.array(zod.string()),
+  warnings: zod.array(zod.string()),
+});
+
+/**
+ * Returns aggregate stats across all supported locations
+ * @summary Global summary stats
+ */
+export const GetLocationStatsResponse = zod.object({
+  totalLocations: zod.number(),
+  locationsWithNomadVisa: zod.number(),
+  lowestTaxLocation: zod.string(),
+  highestQolLocation: zod.string(),
+  cheapestLocation: zod.string(),
+  regions: zod.array(zod.string()),
+});

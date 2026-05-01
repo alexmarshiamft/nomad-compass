@@ -8,3 +8,165 @@
 export interface HealthStatus {
   status: string;
 }
+
+export interface LocationSummary {
+  id: string;
+  city: string;
+  country: string;
+  countryCode: string;
+  region: string;
+  emoji: string;
+  /** e.g. ["digital-nomad-visa", "low-tax", "warm-climate"] */
+  tags: string[];
+}
+
+export interface CompareLocationsBody {
+  /** Annual income in USD */
+  annualIncomeUSD: number;
+  /** ISO country code of employer (e.g. "US", "DE") */
+  employerCountry: string;
+  /** State/province of employer (optional, for US etc.) */
+  employerState?: string;
+  /** List of location IDs to compare (empty = compare all top picks) */
+  locationIds?: string[];
+  /** Preferred display currency (default USD) */
+  currency?: string;
+}
+
+export interface TaxDetails {
+  incomeTaxRate: number;
+  socialSecurityRate: number;
+  hasTaxTreaty: boolean;
+  taxTreatyCountries: string[];
+  taxResidencyNotes: string;
+  /** Special tax regimes for remote workers (e.g. NHR, Beckham law) */
+  remoteWorkerTaxRegime?: string;
+  annualIncomeTaxUSD: number;
+  annualSocialSecurityUSD: number;
+}
+
+export interface LivingDetails {
+  /** 1-bedroom apartment in city center */
+  monthlyRentUSD: number;
+  monthlyFoodUSD: number;
+  monthlyTransportUSD: number;
+  monthlyUtilitiesUSD: number;
+  monthlyOtherUSD: number;
+  /** Cost of living index (NYC=100) */
+  colIndex: number;
+  internetSpeedMbps: number;
+  coworkingDayPassUSD?: number;
+}
+
+export interface QualityOfLifeDetails {
+  /** 0-100 */
+  score: number;
+  safetyIndex: number;
+  healthcareIndex: number;
+  climateScore: number;
+  englishFriendly: boolean;
+  timeZone: string;
+  timeZoneOffsetHours: number;
+  /** How compatible the timezone is with employer timezone (0-100) */
+  timeZoneCompatibilityScore: number;
+}
+
+export interface VisaInfo {
+  hasDigitalNomadVisa: boolean;
+  visaName?: string;
+  visaRequirements?: string;
+  maxStayDays?: number;
+  visaFeeUSD?: number;
+  citizenshipPathYears?: number;
+}
+
+export interface LocationComparison {
+  locationId: string;
+  city: string;
+  country: string;
+  countryCode: string;
+  emoji: string;
+  /** 0-100 overall suitability score */
+  overallScore: number;
+  /** Effective income tax rate as decimal (0.0 - 1.0) */
+  effectiveTaxRate: number;
+  annualTaxUSD: number;
+  /** After tax, before living costs */
+  monthlyNetIncomeUSD: number;
+  monthlyCostOfLivingUSD: number;
+  /** After tax and cost of living */
+  monthlyDisposableIncomeUSD: number;
+  taxDetails: TaxDetails;
+  livingDetails: LivingDetails;
+  qualityOfLife: QualityOfLifeDetails;
+  visaInfo: VisaInfo;
+  pros: string[];
+  cons: string[];
+}
+
+export interface ComparisonResult {
+  comparisons: LocationComparison[];
+  employerCountry: string;
+  annualIncomeUSD: number;
+}
+
+export interface RecommendationsBody {
+  annualIncomeUSD: number;
+  employerCountry: string;
+  employerState?: string;
+  /** e.g. ["low-tax", "warm-climate", "english-friendly", "digital-nomad-visa", "low-cost"] */
+  priorities?: string[];
+  /** User's current country of residence */
+  currentCountry?: string;
+}
+
+export interface RecommendationsResult {
+  topPicks: LocationComparison[];
+  /** Gemini-generated personalized summary and reasoning */
+  aiSummary: string;
+  keyInsights: string[];
+}
+
+export interface TaxAnalysisBody {
+  locationId: string;
+  annualIncomeUSD: number;
+  employerCountry: string;
+  employerState?: string;
+  /** employment, freelance, or contractor */
+  incomeType?: string;
+}
+
+export interface TaxLineItem {
+  label: string;
+  rate: number;
+  annualAmountUSD: number;
+  notes?: string;
+}
+
+export interface TaxAnalysisResult {
+  locationId: string;
+  city: string;
+  country: string;
+  annualIncomeUSD: number;
+  effectiveTaxRate: number;
+  annualTaxUSD: number;
+  monthlyNetUSD: number;
+  taxBreakdown: TaxLineItem[];
+  /** Gemini-generated detailed tax explanation */
+  aiAnalysis: string;
+  optimizationTips: string[];
+  warnings: string[];
+}
+
+export interface LocationStats {
+  totalLocations: number;
+  locationsWithNomadVisa: number;
+  lowestTaxLocation: string;
+  highestQolLocation: string;
+  cheapestLocation: string;
+  regions: string[];
+}
+
+export type ListLocations200 = {
+  locations: LocationSummary[];
+};
