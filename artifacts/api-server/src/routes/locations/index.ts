@@ -171,7 +171,7 @@ router.post("/locations/recommendations", async (req, res): Promise<void> => {
     return;
   }
 
-  const { annualIncomeUSD, employerCountry, priorities = [] } = parsed.data;
+  const { annualIncomeUSD, employerCountry, priorities = [], workSchedule, teamTimezone } = parsed.data;
 
   let filtered = [...LOCATIONS];
 
@@ -224,6 +224,8 @@ router.post("/locations/recommendations", async (req, res): Promise<void> => {
       cons: c.cons,
     })),
     priorities,
+    workSchedule,
+    teamTimezone,
   });
 
   res.json(

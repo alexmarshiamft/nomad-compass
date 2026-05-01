@@ -157,6 +157,18 @@ export const GetRecommendationsBody = zod.object({
     .string()
     .optional()
     .describe("User's current country of residence"),
+  workSchedule: zod
+    .enum(["async", "overlap-4h", "fixed-9-5"])
+    .optional()
+    .describe(
+      "async = fully async no overlap; overlap-4h = needs 4h+ team overlap; fixed-9-5 = fixed hours in employer timezone",
+    ),
+  teamTimezone: zod
+    .enum(["americas", "europe", "asia-pac", "mea", "global"])
+    .optional()
+    .describe(
+      "Region of team timezone: americas, europe, asia-pac, mea (Middle East & Africa), global (no preference)",
+    ),
 });
 
 export const GetRecommendationsResponse = zod.object({

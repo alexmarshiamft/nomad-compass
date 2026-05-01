@@ -4,6 +4,8 @@ interface UserProfile {
   annualIncomeUSD: number;
   employerCountry: string;
   employerState?: string;
+  workSchedule?: string;
+  teamTimezone?: string;
 }
 
 interface UserContextType {

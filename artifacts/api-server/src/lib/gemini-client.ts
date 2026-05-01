@@ -30,11 +30,27 @@ export async function generateAISummary(prompt: string): Promise<string> {
   }
 }
 
+const SCHEDULE_LABELS: Record<string, string> = {
+  "async": "fully async (no timezone overlap needed)",
+  "overlap-4h": "needs 4+ hours of daily overlap with their team",
+  "fixed-9-5": "works fixed 9–5 in their employer's timezone",
+};
+
+const TIMEZONE_LABELS: Record<string, string> = {
+  "americas": "Americas (EST / PST)",
+  "europe": "Europe (CET / GMT)",
+  "asia-pac": "Asia-Pacific (SGT / JST / AEST)",
+  "mea": "Middle East & Africa",
+  "global": "fully distributed / no timezone preference",
+};
+
 export async function generateRecommendationsSummary(params: {
   annualIncomeUSD: number;
   employerCountry: string;
   topLocations: Array<{ city: string; country: string; effectiveTaxRate: number; monthlyDisposableIncomeUSD: number; overallScore: number; pros: string[]; cons: string[] }>;
   priorities: string[];
+  workSchedule?: string;
+  teamTimezone?: string;
 }): Promise<{ aiSummary: string; keyInsights: string[] }> {
   const locationList = params.topLocations
     .map(
@@ -43,17 +59,27 @@ export async function generateRecommendationsSummary(params: {
     )
     .join("\n");
 
+  const scheduleNote = params.workSchedule
+    ? `Work schedule: ${SCHEDULE_LABELS[params.workSchedule] ?? params.workSchedule}.`
+    : "";
+  const timezoneNote = params.teamTimezone
+    ? `Team timezone region: ${TIMEZONE_LABELS[params.teamTimezone] ?? params.teamTimezone}.`
+    : "";
+  const contextLines = [scheduleNote, timezoneNote].filter(Boolean).join(" ");
+
   const prompt = `You are a global relocation advisor for remote workers. A remote worker earning $${params.annualIncomeUSD.toLocaleString()}/year with their employer in ${params.employerCountry} is asking for the best places to live.
 
 Their priorities: ${params.priorities.length > 0 ? params.priorities.join(", ") : "not specified — balanced across all factors"}.
+${contextLines ? `Work context: ${contextLines}` : ""}
 
 Top location picks (by our algorithm):
 ${locationList}
 
 Write a concise, insightful summary (3-4 sentences) that:
 1. Highlights the most compelling 1-2 options and why they stand out for this person specifically
-2. Mentions any key trade-offs they should know about
-3. Is honest and practical, not generic
+2. If schedule or timezone context was provided, factor in whether those cities have good timezone overlap with the team region and whether the work schedule makes certain locations more or less suitable
+3. Mentions any key trade-offs they should know about
+4. Is honest and practical, not generic
 
 Then provide exactly 3 key insights as a JSON array of strings. Format your response as:
 SUMMARY: [your summary paragraph]
