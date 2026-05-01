@@ -23,7 +23,7 @@ const PRIORITIES = [
 export default function Recommendations() {
   const [, setLocation] = useLocation();
   const { profile } = useUser();
-  const [selectedPriorities, setSelectedPriorities] = useState<string[]>([]);
+  const [selectedPriorities, setSelectedPriorities] = useState<string[]>(profile.priorities ?? []);
 
   const recommendMutation = useGetRecommendations();
 

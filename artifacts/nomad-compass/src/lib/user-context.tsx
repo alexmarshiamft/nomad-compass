@@ -6,6 +6,8 @@ interface UserProfile {
   employerState?: string;
   workSchedule?: string;
   teamTimezone?: string;
+  priorities: string[];
+  customNote?: string;
 }
 
 interface UserContextType {
@@ -22,6 +24,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
     employerState: "CA",
     workSchedule: "9am-7pm",
     teamTimezone: "PST",
+    priorities: [],
+    customNote: "",
   });
 
   return (
