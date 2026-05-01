@@ -192,18 +192,13 @@ export default function Home() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-white/80">Work Schedule</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger className="bg-white/10 border-white/20 text-white focus:border-amber-400">
-                                <SelectValue placeholder="Select schedule" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="async">Fully async — no overlap needed</SelectItem>
-                              <SelectItem value="overlap-4h">Need 4h+ team overlap</SelectItem>
-                              <SelectItem value="fixed-9-5">Fixed 9–5 in employer timezone</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          <FormControl>
+                            <Input
+                              className="bg-white/10 border-white/20 text-white placeholder:text-white/30 focus:border-amber-400 focus:ring-amber-400/20"
+                              placeholder="e.g. 9am-5pm, async, flexible"
+                              {...field}
+                            />
+                          </FormControl>
                         </FormItem>
                       )}
                     />
@@ -213,20 +208,13 @@ export default function Home() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-white/80">Team Timezone</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger className="bg-white/10 border-white/20 text-white focus:border-amber-400">
-                                <SelectValue placeholder="Select timezone" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="americas">Americas (EST / PST)</SelectItem>
-                              <SelectItem value="europe">Europe (CET / GMT)</SelectItem>
-                              <SelectItem value="asia-pac">Asia-Pacific (SGT / JST / AEST)</SelectItem>
-                              <SelectItem value="mea">Middle East & Africa</SelectItem>
-                              <SelectItem value="global">Fully distributed / no preference</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          <FormControl>
+                            <Input
+                              className="bg-white/10 border-white/20 text-white placeholder:text-white/30 focus:border-amber-400 focus:ring-amber-400/20"
+                              placeholder="e.g. PST, UTC+2, EST"
+                              {...field}
+                            />
+                          </FormControl>
                         </FormItem>
                       )}
                     />

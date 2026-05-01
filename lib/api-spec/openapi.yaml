@@ -394,12 +394,10 @@ components:
           description: User's current country of residence
         workSchedule:
           type: string
-          enum: [async, overlap-4h, fixed-9-5]
-          description: "async = fully async no overlap; overlap-4h = needs 4h+ team overlap; fixed-9-5 = fixed hours in employer timezone"
+          description: "Free-text work schedule, e.g. '9am-5pm PST', 'flexible async', '10am-6pm CET'"
         teamTimezone:
           type: string
-          enum: [americas, europe, asia-pac, mea, global]
-          description: "Region of team timezone: americas, europe, asia-pac, mea (Middle East & Africa), global (no preference)"
+          description: "Free-text timezone or region, e.g. 'PST', 'UTC+2', 'Americas', 'Tokyo JST'"
       required:
         - annualIncomeUSD
         - employerCountry

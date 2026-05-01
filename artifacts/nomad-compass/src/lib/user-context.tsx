@@ -20,6 +20,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
     annualIncomeUSD: 50000,
     employerCountry: "US",
     employerState: "CA",
+    workSchedule: "9am-7pm",
+    teamTimezone: "PST",
   });
 
   return (

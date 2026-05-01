@@ -110,32 +110,6 @@ export interface ComparisonResult {
   annualIncomeUSD: number;
 }
 
-/**
- * async = fully async no overlap; overlap-4h = needs 4h+ team overlap; fixed-9-5 = fixed hours in employer timezone
- */
-export type RecommendationsBodyWorkSchedule =
-  (typeof RecommendationsBodyWorkSchedule)[keyof typeof RecommendationsBodyWorkSchedule];
-
-export const RecommendationsBodyWorkSchedule = {
-  async: "async",
-  "overlap-4h": "overlap-4h",
-  "fixed-9-5": "fixed-9-5",
-} as const;
-
-/**
- * Region of team timezone: americas, europe, asia-pac, mea (Middle East & Africa), global (no preference)
- */
-export type RecommendationsBodyTeamTimezone =
-  (typeof RecommendationsBodyTeamTimezone)[keyof typeof RecommendationsBodyTeamTimezone];
-
-export const RecommendationsBodyTeamTimezone = {
-  americas: "americas",
-  europe: "europe",
-  "asia-pac": "asia-pac",
-  mea: "mea",
-  global: "global",
-} as const;
-
 export interface RecommendationsBody {
   annualIncomeUSD: number;
   employerCountry: string;
@@ -144,10 +118,10 @@ export interface RecommendationsBody {
   priorities?: string[];
   /** User's current country of residence */
   currentCountry?: string;
-  /** async = fully async no overlap; overlap-4h = needs 4h+ team overlap; fixed-9-5 = fixed hours in employer timezone */
-  workSchedule?: RecommendationsBodyWorkSchedule;
-  /** Region of team timezone: americas, europe, asia-pac, mea (Middle East & Africa), global (no preference) */
-  teamTimezone?: RecommendationsBodyTeamTimezone;
+  /** Free-text work schedule, e.g. '9am-5pm PST', 'flexible async', '10am-6pm CET' */
+  workSchedule?: string;
+  /** Free-text timezone or region, e.g. 'PST', 'UTC+2', 'Americas', 'Tokyo JST' */
+  teamTimezone?: string;
 }
 
 export interface RecommendationsResult {

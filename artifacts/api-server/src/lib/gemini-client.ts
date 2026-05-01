@@ -30,20 +30,6 @@ export async function generateAISummary(prompt: string): Promise<string> {
   }
 }
 
-const SCHEDULE_LABELS: Record<string, string> = {
-  "async": "fully async (no timezone overlap needed)",
-  "overlap-4h": "needs 4+ hours of daily overlap with their team",
-  "fixed-9-5": "works fixed 9–5 in their employer's timezone",
-};
-
-const TIMEZONE_LABELS: Record<string, string> = {
-  "americas": "Americas (EST / PST)",
-  "europe": "Europe (CET / GMT)",
-  "asia-pac": "Asia-Pacific (SGT / JST / AEST)",
-  "mea": "Middle East & Africa",
-  "global": "fully distributed / no timezone preference",
-};
-
 export async function generateRecommendationsSummary(params: {
   annualIncomeUSD: number;
   employerCountry: string;
@@ -59,12 +45,8 @@ export async function generateRecommendationsSummary(params: {
     )
     .join("\n");
 
-  const scheduleNote = params.workSchedule
-    ? `Work schedule: ${SCHEDULE_LABELS[params.workSchedule] ?? params.workSchedule}.`
-    : "";
-  const timezoneNote = params.teamTimezone
-    ? `Team timezone region: ${TIMEZONE_LABELS[params.teamTimezone] ?? params.teamTimezone}.`
-    : "";
+  const scheduleNote = params.workSchedule ? `Work schedule: "${params.workSchedule}".` : "";
+  const timezoneNote = params.teamTimezone ? `Team timezone: "${params.teamTimezone}".` : "";
   const contextLines = [scheduleNote, timezoneNote].filter(Boolean).join(" ");
 
   const prompt = `You are a global relocation advisor for remote workers. A remote worker earning $${params.annualIncomeUSD.toLocaleString()}/year with their employer in ${params.employerCountry} is asking for the best places to live.

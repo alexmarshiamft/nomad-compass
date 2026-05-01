@@ -34,8 +34,8 @@ export default function Recommendations() {
         employerCountry: profile.employerCountry,
         employerState: profile.employerState,
         priorities: selectedPriorities,
-        workSchedule: profile.workSchedule as "async" | "overlap-4h" | "fixed-9-5" | undefined,
-        teamTimezone: profile.teamTimezone as "americas" | "europe" | "asia-pac" | "mea" | "global" | undefined,
+        workSchedule: profile.workSchedule,
+        teamTimezone: profile.teamTimezone,
       }
     });
   };
