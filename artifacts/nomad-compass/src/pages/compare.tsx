@@ -16,6 +16,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowUpDown, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+const DIFFICULTY_COLOR: Record<number, string> = {
+  1: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300",
+  2: "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300",
+  3: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300",
+  4: "bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300",
+  5: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
+};
+
 const US_STATE: Record<string, string> = {
   "us-austin": "TX", "us-miami": "FL", "us-denver": "CO",
   "us-nashville": "TN", "us-tampa": "FL", "us-phoenix": "AZ",
@@ -76,6 +84,9 @@ export default function Compare() {
       } else if (sortCol === "hasDigitalNomadVisa") {
         valA = a.visaInfo.hasDigitalNomadVisa ? 1 : 0;
         valB = b.visaInfo.hasDigitalNomadVisa ? 1 : 0;
+      } else if (sortCol === "relocationDifficulty") {
+        valA = 6 - (a.relocationInfo?.setupDifficulty ?? 3);
+        valB = 6 - (b.relocationInfo?.setupDifficulty ?? 3);
       }
 
       if (valA < valB) return sortDesc ? 1 : -1;
@@ -133,6 +144,9 @@ export default function Compare() {
                     <div className="flex justify-center items-center gap-1">Nomad Visa <ArrowUpDown className="w-3 h-3" /></div>
                   </TableHead>
                 )}
+                <TableHead className="cursor-pointer" onClick={() => handleSort("relocationDifficulty")}>
+                  <div className="flex items-center gap-1">Move Ease <ArrowUpDown className="w-3 h-3" /></div>
+                </TableHead>
                 <TableHead></TableHead>
               </TableRow>
             </TableHeader>
@@ -140,7 +154,7 @@ export default function Compare() {
               {compareMutation.isPending || isLoadingLocations ? (
                 Array.from({ length: isUSMode ? 8 : 10 }).map((_, i) => (
                   <TableRow key={i}>
-                    {Array.from({ length: isUSMode ? 8 : 9 }).map((_, j) => (
+                    {Array.from({ length: isUSMode ? 9 : 10 }).map((_, j) => (
                       <TableCell key={j}><Skeleton className="h-6 w-full" /></TableCell>
                     ))}
                   </TableRow>
@@ -181,6 +195,13 @@ export default function Compare() {
                       )}
                     </TableCell>
                   )}
+                  <TableCell>
+                    {loc.relocationInfo && (
+                      <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full whitespace-nowrap ${DIFFICULTY_COLOR[loc.relocationInfo.setupDifficulty] ?? DIFFICULTY_COLOR[3]}`}>
+                        {loc.relocationInfo.setupDifficultyLabel}
+                      </span>
+                    )}
+                  </TableCell>
                   <TableCell>
                     <Button variant="ghost" size="sm" className="w-full text-xs">
                       Analyze

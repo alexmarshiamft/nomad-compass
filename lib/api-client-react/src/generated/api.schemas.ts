@@ -80,6 +80,23 @@ export interface VisaInfo {
   citizenshipPathYears?: number;
 }
 
+export interface RelocationInfo {
+  /** 1 (trivial) to 5 (very challenging) difficulty to legally move and stay */
+  setupDifficulty: number;
+  /** Human label e.g. "Very Easy", "Easy", "Moderate", "Hard", "Very Challenging" */
+  setupDifficultyLabel: string;
+  /** Days a US/EU passport holder can stay without a visa */
+  touristVisaDays: number;
+  /** Estimated one-time relocation cost (flight + deposits + fees) */
+  estimatedMoveInCostUSD: number;
+  /** Notes on opening a local bank account */
+  bankingNotes: string;
+  /** Whether private health insurance is required for visa/residency */
+  healthInsuranceRequired: boolean;
+  /** Actionable steps to legally live and work remotely there */
+  keySteps: string[];
+}
+
 export interface LocationComparison {
   locationId: string;
   city: string;
@@ -100,6 +117,7 @@ export interface LocationComparison {
   livingDetails: LivingDetails;
   qualityOfLife: QualityOfLifeDetails;
   visaInfo: VisaInfo;
+  relocationInfo: RelocationInfo;
   pros: string[];
   cons: string[];
 }
@@ -160,6 +178,7 @@ export interface TaxAnalysisResult {
   aiAnalysis: string;
   optimizationTips: string[];
   warnings: string[];
+  relocationInfo: RelocationInfo;
 }
 
 export interface LocationStats {

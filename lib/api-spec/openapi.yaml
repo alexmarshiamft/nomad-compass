@@ -238,6 +238,8 @@ components:
           $ref: "#/components/schemas/QualityOfLifeDetails"
         visaInfo:
           $ref: "#/components/schemas/VisaInfo"
+        relocationInfo:
+          $ref: "#/components/schemas/RelocationInfo"
         pros:
           type: array
           items:
@@ -262,6 +264,7 @@ components:
         - livingDetails
         - qualityOfLife
         - visaInfo
+        - relocationInfo
         - pros
         - cons
 
@@ -375,6 +378,41 @@ components:
       required:
         - hasDigitalNomadVisa
 
+    RelocationInfo:
+      type: object
+      properties:
+        setupDifficulty:
+          type: number
+          description: 1 (trivial) to 5 (very challenging) difficulty to legally move and stay
+        setupDifficultyLabel:
+          type: string
+          description: Human label e.g. "Very Easy", "Easy", "Moderate", "Hard", "Very Challenging"
+        touristVisaDays:
+          type: number
+          description: Days a US/EU passport holder can stay without a visa
+        estimatedMoveInCostUSD:
+          type: number
+          description: Estimated one-time relocation cost (flight + deposits + fees)
+        bankingNotes:
+          type: string
+          description: Notes on opening a local bank account
+        healthInsuranceRequired:
+          type: boolean
+          description: Whether private health insurance is required for visa/residency
+        keySteps:
+          type: array
+          items:
+            type: string
+          description: Actionable steps to legally live and work remotely there
+      required:
+        - setupDifficulty
+        - setupDifficultyLabel
+        - touristVisaDays
+        - estimatedMoveInCostUSD
+        - bankingNotes
+        - healthInsuranceRequired
+        - keySteps
+
     RecommendationsBody:
       type: object
       properties:
@@ -472,6 +510,8 @@ components:
           type: array
           items:
             type: string
+        relocationInfo:
+          $ref: "#/components/schemas/RelocationInfo"
       required:
         - locationId
         - city
@@ -484,6 +524,7 @@ components:
         - aiAnalysis
         - optimizationTips
         - warnings
+        - relocationInfo
 
     TaxLineItem:
       type: object

@@ -2340,6 +2340,589 @@ export const LOCATIONS: LocationData[] = [
   },
 ];
 
+export interface RelocationInfo {
+  setupDifficulty: number;
+  setupDifficultyLabel: string;
+  touristVisaDays: number;
+  estimatedMoveInCostUSD: number;
+  bankingNotes: string;
+  healthInsuranceRequired: boolean;
+  keySteps: string[];
+}
+
+export const RELOCATION_INFO: Record<string, RelocationInfo> = {
+  "pt-lisbon": {
+    setupDifficulty: 2, setupDifficultyLabel: "Easy",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 5500,
+    bankingNotes: "Millennium BCP and Monese are foreigner-friendly. Open with passport + NIF (tax number).",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Apply for the D8 Digital Nomad Visa online (proof of $4,200/mo income + health insurance)",
+      "Get your NIF (tax ID) at a Finanças office — book online, usually same week",
+      "Register with SEF/AIMA for residency within 3 months of arrival",
+      "Open a bank account and register your address for tax residency",
+    ],
+  },
+  "pt-porto": {
+    setupDifficulty: 2, setupDifficultyLabel: "Easy",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 4800,
+    bankingNotes: "Same as Lisbon — Millennium BCP easiest for NIF-holders.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Apply for the D8 Digital Nomad Visa (same process as Lisbon, easier housing competition)",
+      "Get your NIF at a Finanças office in Porto",
+      "Register with AIMA for residency within 3 months",
+      "Open a bank account; Wise/Revolut bridge the gap while waiting",
+    ],
+  },
+  "es-barcelona": {
+    setupDifficulty: 3, setupDifficultyLabel: "Moderate",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 6000,
+    bankingNotes: "CaixaBank or Sabadell accept NIE-holders. Getting a NIE is the first hurdle.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Get a NIE (Número de Identidad de Extranjero) at a Spanish consulate before arrival or in Spain",
+      "Apply for the Digital Nomad Visa (Beckham Law compatible, €36k+ income required)",
+      "Register on the Padrón Municipal (city register) at your local Ayuntamiento",
+      "Apply for the Beckham Law tax regime for a 24% flat income tax rate",
+    ],
+  },
+  "ee-tallinn": {
+    setupDifficulty: 2, setupDifficultyLabel: "Easy",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 3800,
+    bankingNotes: "LHV Bank is the go-to for digital residents. e-Residency lets you open an EU business first.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Apply for Estonia's Digital Nomad Visa online — straightforward, ~2 weeks processing",
+      "Get e-Residency card if you want to run an EU company (optional but powerful)",
+      "Register your address at the local government office for residency",
+      "Open a LHV bank account with your visa and registered address",
+    ],
+  },
+  "cz-prague": {
+    setupDifficulty: 3, setupDifficultyLabel: "Moderate",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 4500,
+    bankingNotes: "Moneta Money Bank or Fio Banka accept foreigners with trade license. Revolut works as a stopgap.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Apply for the Zivnostenský list (trade license) at the Trade Licensing Office — requires translated documents",
+      "Get a Long-Term Residence Permit for the purpose of business (apply at Czech embassy in your home country)",
+      "Register with the trade authority and Czech tax office",
+      "Enroll in public or private health insurance within 8 days of arrival",
+    ],
+  },
+  "hu-budapest": {
+    setupDifficulty: 3, setupDifficultyLabel: "Moderate",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 3500,
+    bankingNotes: "OTP Bank is the main local bank. Revolut and Wise are popular among expats.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Apply for a White Card (Guest Worker or Freelancer Permit) at a Hungarian consulate",
+      "Register your address at the local government office (Kormányablak) within 3 days of arrival",
+      "Apply for a TAJ health insurance card or purchase private coverage",
+      "Register with the National Tax and Customs Administration (NAV) for tax obligations",
+    ],
+  },
+  "ro-bucharest": {
+    setupDifficulty: 3, setupDifficultyLabel: "Moderate",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 3200,
+    bankingNotes: "BCR and ING Romania are the easiest for foreigners. Revolut is widely used.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Apply for the Romanian Digital Nomad Visa online ($3,500/mo income requirement)",
+      "Register your address at the local Inspectoratul General pentru Imigrări (IGI) office",
+      "Get a Romanian tax number (CNP) to open a bank account",
+      "Purchase private health insurance valid in Romania",
+    ],
+  },
+  "bg-sofia": {
+    setupDifficulty: 3, setupDifficultyLabel: "Moderate",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 2800,
+    bankingNotes: "Unicredit Bulbank and DSK Bank accept foreigners with residency. Revolut works fine for day-to-day.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Apply for a Type D Long-Stay Visa at a Bulgarian embassy (freelancer or self-employment category)",
+      "Register your address within 5 days at the Migration Directorate",
+      "Get a Personal Identification Number (ЕГН) for residents",
+      "Register as a freelancer or company with the Trade Register",
+    ],
+  },
+  "de-berlin": {
+    setupDifficulty: 4, setupDifficultyLabel: "Hard",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 6500,
+    bankingNotes: "N26 or Deutsche Bank for residents. N26 is foreigner-friendly with just a passport.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Apply for a German Freelancer Visa (Freiberufler) — requires portfolio, proof of clients, financial projections",
+      "Book a Bürgeramt appointment (often 4-8 week wait) for Anmeldung (address registration)",
+      "Register with the Finanzamt (tax office) within 4 weeks for a Steuernummer",
+      "Enroll in public health insurance (DAK, TK) or a private plan recognized in Germany",
+    ],
+  },
+  "nl-amsterdam": {
+    setupDifficulty: 3, setupDifficultyLabel: "Moderate",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 7000,
+    bankingNotes: "ING or Bunq are the easiest for new arrivals. You need a BSN (citizen service number) for most banks.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Register at the municipality (gemeente) to get a BSN number — book weeks in advance",
+      "Apply for a Dutch freelancer/self-employed permit via IND (Immigration and Naturalisation Service)",
+      "Get Dutch health insurance (verplicht in NL) — Zilveren Kruis or Zorg en Zekerheid",
+      "Register with the KVK (Chamber of Commerce) if freelancing",
+    ],
+  },
+  "ae-dubai": {
+    setupDifficulty: 2, setupDifficultyLabel: "Easy",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 5000,
+    bankingNotes: "Emirates NBD or Mashreq — require residency visa. FAB is more flexible. Wise works for transfers.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Apply for the Remote Work Visa (Virtual Working Programme) — $611 fee, process in ~2 weeks",
+      "Get your Emirates ID after visa approval — required for everything",
+      "Open a bank account with your visa and Emirates ID",
+      "Purchase UAE-compliant health insurance (mandatory for visa)",
+    ],
+  },
+  "sg-singapore": {
+    setupDifficulty: 4, setupDifficultyLabel: "Hard",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 9000,
+    bankingNotes: "DBS or OCBC — require a valid long-stay pass. Opening an account as a tourist is not possible.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "You cannot legally work remotely in Singapore on a tourist visa — an Employment Pass or EntrePass is required",
+      "EntrePass requires a registered SG company with a business plan reviewed by MOM",
+      "Employment Pass requires a Singapore employer sponsoring you ($6,000+/mo salary threshold)",
+      "Consider using Singapore as a base for 90 days for meetings while maintaining residency elsewhere",
+    ],
+  },
+  "th-bangkok": {
+    setupDifficulty: 3, setupDifficultyLabel: "Moderate",
+    touristVisaDays: 60, estimatedMoveInCostUSD: 3000,
+    bankingNotes: "Bangkok Bank and Kasikorn (KBank) open accounts for METV or LTR visa holders. Wise is essential.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Entry: 60-day tourist visa (free on arrival for most), extendable 30 days at immigration",
+      "For long-term: apply for the LTR Visa (Long-Term Resident) — requires $80k/yr income + health insurance",
+      "Alternatively, do 'visa runs' every 60-90 days to a neighboring country (popular but not officially endorsed)",
+      "Open a Thai bank account with your passport + proof of address for a METV or LTR visa",
+    ],
+  },
+  "th-chiang-mai": {
+    setupDifficulty: 3, setupDifficultyLabel: "Moderate",
+    touristVisaDays: 60, estimatedMoveInCostUSD: 2500,
+    bankingNotes: "Same as Bangkok — Kasikorn Bank (KBank) is the most accessible for foreigners.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Arrive on 60-day tourist visa (extendable by 30 days at Chiang Mai Immigration)",
+      "For long-term: apply for LTR Visa or Thailand Elite Visa ($15,000 one-time for 5-20 year access)",
+      "Register at the local immigration office within 90 days if staying beyond tourist entry",
+      "Purchase comprehensive health insurance — Thailand's private hospitals are excellent and affordable",
+    ],
+  },
+  "id-bali": {
+    setupDifficulty: 4, setupDifficultyLabel: "Hard",
+    touristVisaDays: 30, estimatedMoveInCostUSD: 3500,
+    bankingNotes: "BCA or Mandiri with a KITAS. Opening a bank account as a tourist is very difficult — use Wise.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Enter on 30-day Visa on Arrival (extendable to 60 days, $35 fee)",
+      "For longer stay: apply for the B211A Social/Cultural Visa (requires sponsor, 60 days × 4 extensions = 6 months)",
+      "True long-term requires a KITAS (Limited Stay Permit) — requires a local sponsor or company",
+      "New 'Second Home Visa' (E33G) is the cleanest long-term option — $1,000 fee, 5-10 year permit, requires $130k in a local bank",
+    ],
+  },
+  "my-kuala-lumpur": {
+    setupDifficulty: 2, setupDifficultyLabel: "Easy",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 3000,
+    bankingNotes: "Maybank or CIMB with DE Rantau Pass. Most expats use Wise until they get the pass approved.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Apply online for the DE Rantau Nomad Pass (income $24k/yr, $49 fee, 3-12 month duration)",
+      "Get a tax identification number (TIN) from LHDN after arrival",
+      "Open a Maybank or CIMB account using your DE Rantau pass",
+      "Purchase health insurance valid in Malaysia (required for visa renewal)",
+    ],
+  },
+  "ge-tbilisi": {
+    setupDifficulty: 1, setupDifficultyLabel: "Very Easy",
+    touristVisaDays: 365, estimatedMoveInCostUSD: 2500,
+    bankingNotes: "TBC Bank and Bank of Georgia are easy to open with just a passport. Takes 30 minutes.",
+    healthInsuranceRequired: false,
+    keySteps: [
+      "Simply arrive — US citizens get 365 days visa-free with zero registration required",
+      "Open a TBC Bank or Bank of Georgia account on day 1 with just your passport",
+      "Get a Georgian SIM card (Magti or Geocell, ~$5/month for data)",
+      "No tax filing required until you stay 183+ days and choose to register",
+    ],
+  },
+  "mt-malta": {
+    setupDifficulty: 3, setupDifficultyLabel: "Moderate",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 5000,
+    bankingNotes: "Bank of Valletta or HSBC Malta — require residency permit. Revolut works in the meantime.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Apply for the Nomad Residence Permit (NORI) — requires $2,700/mo income, health insurance",
+      "Register your address with Identity Malta within 3 months of arrival",
+      "Get a Maltese ID number for banking and services",
+      "Open a bank account with your residency permit (Bank of Valletta is the standard choice)",
+    ],
+  },
+  "cy-limassol": {
+    setupDifficulty: 3, setupDifficultyLabel: "Moderate",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 5500,
+    bankingNotes: "Hellenic Bank or Bank of Cyprus with residency. Cyprus is EU banking but not Schengen.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Apply for Category F visa (Person of Independent Means) or the Digital Nomad Visa",
+      "Get a Yellow Slip (Alien Registration Certificate) at the Civil Registry and Migration Department",
+      "Obtain a Cyprus Tax Identification Code (TIC) at the Tax Department",
+      "Open a bank account with your Yellow Slip and proof of income",
+    ],
+  },
+  "mx-mexico-city": {
+    setupDifficulty: 1, setupDifficultyLabel: "Very Easy",
+    touristVisaDays: 180, estimatedMoveInCostUSD: 2500,
+    bankingNotes: "BBVA Mexico or Banco Azteca with your FMM tourist card. Wise and N26 are widely used as alternatives.",
+    healthInsuranceRequired: false,
+    keySteps: [
+      "Arrive with a passport — US citizens get 180 days visa-free on a tourist card (FMM)",
+      "Renew by crossing the border or flying out after 180 days (very commonly done)",
+      "For formal residency: apply for Temporary Resident Visa at a Mexican consulate ($178k+ savings or $2,595/mo income)",
+      "CURP (ID number) and RFC (tax ID) are needed for longer stays and banking",
+    ],
+  },
+  "co-medellin": {
+    setupDifficulty: 2, setupDifficultyLabel: "Easy",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 3000,
+    bankingNotes: "Bancolombia with the digital nomad visa. Nequi (mobile bank) is easy to open as a tourist.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Arrive on 90-day tourist visa (extendable to 180 total via renewal at Migración Colombia)",
+      "Apply for the Colombia Digital Nomad Visa online — $600/mo income minimum, quick process",
+      "Register with DIAN (tax authority) if staying 183+ days for a RUT (tax ID)",
+      "Open a Nequi or Bancolombia account with your cedula extranjería (foreign ID card)",
+    ],
+  },
+  "pa-panama-city": {
+    setupDifficulty: 2, setupDifficultyLabel: "Easy",
+    touristVisaDays: 180, estimatedMoveInCostUSD: 4000,
+    bankingNotes: "Banistmo or BAC Panama — require Pensionado/Friendly Nations Visa. Panama has strong banking secrecy.",
+    healthInsuranceRequired: false,
+    keySteps: [
+      "Enter on 180-day tourist visa — extendable with a simple extension application",
+      "Apply for the Friendly Nations Visa (from US/EU/etc.) — requires $5k bank deposit and solvency proof",
+      "Get a Panama cédula (ID) once residency is approved — takes 3-6 months",
+      "Open a bank account with cédula + proof of income + clean background check",
+    ],
+  },
+  "au-sydney": {
+    setupDifficulty: 3, setupDifficultyLabel: "Moderate",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 7000,
+    bankingNotes: "Commonwealth Bank or NAB — open with a visa and passport. Very straightforward process.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Get an Australian eTA (Electronic Travel Authority) — $20, approved instantly online",
+      "Tourist visa allows 3 months (up to 6 months on eVisitor 651 from eligible countries)",
+      "For long-term work: no standalone nomad visa — options include Working Holiday (under 35), employer sponsorship, or Global Talent visa",
+      "Open a Commonwealth Bank or ANZ account — can start the process online from abroad",
+    ],
+  },
+  "vn-ho-chi-minh": {
+    setupDifficulty: 3, setupDifficultyLabel: "Moderate",
+    touristVisaDays: 45, estimatedMoveInCostUSD: 2800,
+    bankingNotes: "VietcomBank or Techcombank — open with e-visa + passport. Bring USD cash for initial period.",
+    healthInsuranceRequired: false,
+    keySteps: [
+      "Apply for a Vietnam e-visa ($25) — grants 90 days single entry (2024 extension) for most nationalities",
+      "For longer stays: apply for a DL (business/investor) visa through a local sponsor, or repeat entries",
+      "No official digital nomad visa yet — most remote workers use back-to-back tourist entries",
+      "Open a Techcombank or VCB account with your passport + visa + temporary address registration",
+    ],
+  },
+  "bb-bridgetown": {
+    setupDifficulty: 2, setupDifficultyLabel: "Easy",
+    touristVisaDays: 180, estimatedMoveInCostUSD: 5500,
+    bankingNotes: "Scotiabank Barbados or CIBC FirstCaribbean — open with Welcome Stamp visa. English-language banking.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Apply for the Barbados Welcome Stamp (12-month visa) — $2,000 individual/$3,000 family, fully online",
+      "Arrive and register your stay with the Barbados Immigration Department",
+      "Open a Scotiabank account using your Welcome Stamp and passport",
+      "Purchase comprehensive health insurance valid in Barbados (required for visa)",
+    ],
+  },
+  "cr-san-jose": {
+    setupDifficulty: 2, setupDifficultyLabel: "Easy",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 3500,
+    bankingNotes: "BAC San José or Banco Nacional — open with residency. Wise is popular among expats for day-to-day.",
+    healthInsuranceRequired: false,
+    keySteps: [
+      "Arrive on 90-day tourist visa — extendable by leaving and re-entering (common 'border run' to Nicaragua/Panama)",
+      "Apply for Rentista visa ($2,500/mo income) or Pensionado visa for structured long-term residency",
+      "Register with the CCSS (Caja) for healthcare access once on a residency visa",
+      "Open a bank account with your residency card (cédula de residencia)",
+    ],
+  },
+  "mu-mauritius": {
+    setupDifficulty: 2, setupDifficultyLabel: "Easy",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 5000,
+    bankingNotes: "MCB (Mauritius Commercial Bank) or SBM — open with Premium Visa. English is the official language.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Apply online for the Mauritius Premium Visa (long-stay up to 1 year, renewable) — simple process, ~$150 fee",
+      "Arrive with your visa approval letter and register with the Registrar of Citizens",
+      "Open an MCB bank account using your Premium Visa and proof of income",
+      "Get private health insurance — Mauritius has excellent private hospitals",
+    ],
+  },
+  "za-cape-town": {
+    setupDifficulty: 2, setupDifficultyLabel: "Easy",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 4000,
+    bankingNotes: "FNB (First National Bank) or Standard Bank — open with passport. Very foreigner-friendly banking.",
+    healthInsuranceRequired: false,
+    keySteps: [
+      "Arrive on 90-day visa-free tourist entry — extendable up to 3 years with renewal applications",
+      "Apply for a Critical Skills Visa if you're a tech/creative professional — covers remote workers",
+      "Open a FNB or Absa bank account with just your passport at the branch",
+      "Get voluntary private health insurance — Discovery Health is the leading provider",
+    ],
+  },
+  "at-vienna": {
+    setupDifficulty: 3, setupDifficultyLabel: "Moderate",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 6000,
+    bankingNotes: "Erste Bank or Bank Austria — require residence registration (Meldezettel). N26 works from day one.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Apply for the Austrian Freelancer Visa (Selbstständige) at the Austrian embassy — requires client contracts and income proof",
+      "Register your address (Meldezettel) at the Magistratisches Bezirksamt within 3 days of arrival",
+      "Enroll in Austrian health insurance (SVS for self-employed) as a mandatory requirement",
+      "Register with the tax authority (Finanzamt) within 1 month",
+    ],
+  },
+  "fr-paris": {
+    setupDifficulty: 3, setupDifficultyLabel: "Moderate",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 7500,
+    bankingNotes: "BNP Paribas or Société Générale — bureaucratic but doable with a Talent Passport. Revolut is widely accepted.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Apply for the Passeport Talent — Profession Libérale visa at the French consulate (proof of clients, income, portfolio)",
+      "Register as an auto-entrepreneur (micro-enterprise) with URSSAF online — takes 1 week",
+      "Register your address at the local mairie and get a certificat de domicile",
+      "Enroll in CPAM (Sécurité Sociale) once registered as auto-entrepreneur",
+    ],
+  },
+  "jp-tokyo": {
+    setupDifficulty: 4, setupDifficultyLabel: "Hard",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 9000,
+    bankingNotes: "Japan Post Bank or Shinsei Bank — open after getting your Residence Card (takes 2-3 months). Wise is essential in the interim.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Tourist visa: 90 days visa-free, but legally working is prohibited on this visa",
+      "Options: Business Manager Visa (requires a Japan-registered company with $25k capital), Highly Skilled Professional Visa, or Specified Skilled Worker",
+      "Register at city hall (役所) within 14 days to get your Residence Card (在留カード)",
+      "Enroll in Japan's National Health Insurance (国民健康保険) at city hall — mandatory for residents",
+    ],
+  },
+  "kr-seoul": {
+    setupDifficulty: 3, setupDifficultyLabel: "Moderate",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 7500,
+    bankingNotes: "KEB Hana Bank or Shinhan Bank — open with Alien Registration Card. Kakao Bank is popular for tech-savvy expats.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Apply for Korea's Workation Visa (F-1-D) — for remote workers, 90-day renewable, $2,000/mo income required",
+      "Register with the local immigration office within 90 days to get an Alien Registration Card (ARC)",
+      "Open a KEB Hana Bank or Kakao Bank account with your ARC",
+      "Enroll in the National Health Insurance Service (NHIS) after getting ARC",
+    ],
+  },
+  "nz-auckland": {
+    setupDifficulty: 3, setupDifficultyLabel: "Moderate",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 7500,
+    bankingNotes: "ANZ or ASB Bank — open with visa + proof of address. Very smooth process.",
+    healthInsuranceRequired: false,
+    keySteps: [
+      "Apply for NZeTA (NZ Electronic Travel Authority) — ~$12, instant approval for most nationalities",
+      "Tourist visa: 90 days, can apply for visitor visa extensions up to 9 months total",
+      "For long-term work: Working Holiday Visa (for under 35) or Skilled Migrant visa",
+      "Open a bank account at ANZ — can start online, verify in-branch on arrival",
+    ],
+  },
+  "ch-zurich": {
+    setupDifficulty: 4, setupDifficultyLabel: "Hard",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 10000,
+    bankingNotes: "UBS or Credit Suisse (now UBS) — require a Swiss residence permit. Neon or Zak are easier for new arrivals.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Switzerland has no dedicated digital nomad visa — options are L (short-term) or B (long-term) permits requiring a job offer or Swiss company",
+      "Self-employment permit requires local clients and proof you won't compete with Swiss workers",
+      "Register at the Kreisbüro (district office) within 8 days of arrival",
+      "Mandatory health insurance (Krankenkasse) must be purchased within 3 months — Helsana or CSS are major providers",
+    ],
+  },
+  "uk-london": {
+    setupDifficulty: 4, setupDifficultyLabel: "Hard",
+    touristVisaDays: 180, estimatedMoveInCostUSD: 8500,
+    bankingNotes: "Barclays or Monzo — Monzo is the easiest for new arrivals, no proof of address needed.",
+    healthInsuranceRequired: false,
+    keySteps: [
+      "UK has no dedicated digital nomad visa — tourist visa allows 6 months but working is prohibited",
+      "Best option: Global Talent Visa (endorsed by Tech Nation for tech/digital workers) or Innovator Founder Visa",
+      "High Potential Individual Visa if you graduated from a top 50 global university (2 years, no job offer needed)",
+      "Sole Representative or Skilled Worker visas require UK employer or UK business setup",
+    ],
+  },
+  "hr-dubrovnik": {
+    setupDifficulty: 2, setupDifficultyLabel: "Easy",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 4500,
+    bankingNotes: "Privredna Banka Zagreb (PBZ) or Erste Bank — open with residence permit. Revolut widely accepted.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Apply for Croatia's Digital Nomad Visa at a Croatian embassy — $2,540/mo income, health insurance required",
+      "Register your address at the local police station within 3 days of arrival",
+      "Open a bank account with your residence permit",
+      "Note: Dubrovnik has a cap on the number of digital nomad residents — apply early",
+    ],
+  },
+  "ar-buenos-aires": {
+    setupDifficulty: 2, setupDifficultyLabel: "Easy",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 2500,
+    bankingNotes: "Banco Nación or Banco Ciudad with DNI. Most expats use Wise due to Argentina's complex exchange rate situation.",
+    healthInsuranceRequired: false,
+    keySteps: [
+      "Arrive on 90-day tourist visa — renewable with a simple 'visa run' to Colonia, Uruguay (ferry, 1 hour)",
+      "For longer stay: apply for Temporary Residency via RENAPER (retired, rentista, or investor category)",
+      "Get a DNI (national ID) once on residency visa — needed for banking and services",
+      "Use Wise or Revolut for day-to-day — the 'blue dollar' parallel exchange gives significantly better rates than official channels",
+    ],
+  },
+  "gr-athens": {
+    setupDifficulty: 3, setupDifficultyLabel: "Moderate",
+    touristVisaDays: 90, estimatedMoveInCostUSD: 4000,
+    bankingNotes: "Alpha Bank or Piraeus Bank — open with AΦΜ (Greek tax number) and residency. Revolut works across Greece.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Apply for the Greek Digital Nomad Visa online — $3,500/mo income minimum, proof of remote employment",
+      "Get your AFM (Greek tax number) at the nearest DOU (tax office) — first step for anything in Greece",
+      "Register your address at the local municipality (Δήμος) for residency permit",
+      "Open a Greek bank account with your AFM and residence permit",
+    ],
+  },
+  // US cities — no immigration needed
+  "us-austin": {
+    setupDifficulty: 1, setupDifficultyLabel: "Very Easy",
+    touristVisaDays: 365, estimatedMoveInCostUSD: 2500,
+    bankingNotes: "Any US bank works. Frost Bank and Prosperity Bank are Austin-based favorites.",
+    healthInsuranceRequired: false,
+    keySteps: [
+      "No visa or immigration required for US citizens/residents",
+      "Find housing — lease typically requires 2-3x monthly rent in income proof and first+last month deposit",
+      "Update your driver's license and vehicle registration within 30-90 days of moving",
+      "Update your voter registration and health insurance to your new address",
+    ],
+  },
+  "us-miami": {
+    setupDifficulty: 1, setupDifficultyLabel: "Very Easy",
+    touristVisaDays: 365, estimatedMoveInCostUSD: 3500,
+    bankingNotes: "Bank of America and Chase are the most common. Miami has many international banking options too.",
+    healthInsuranceRequired: false,
+    keySteps: [
+      "No visa or immigration required for US citizens/residents",
+      "Miami's rental market is competitive — budget for 2 months deposit and proof of 3x income",
+      "Get Florida driver's license within 30 days and register your vehicle",
+      "Consider short-term furnished rentals first to scout the right neighborhood",
+    ],
+  },
+  "us-denver": {
+    setupDifficulty: 1, setupDifficultyLabel: "Very Easy",
+    touristVisaDays: 365, estimatedMoveInCostUSD: 2800,
+    bankingNotes: "Wells Fargo and FirstBank Colorado are popular locally. Any US bank works fine.",
+    healthInsuranceRequired: false,
+    keySteps: [
+      "No visa or immigration required for US citizens/residents",
+      "Get a Colorado driver's license within 30 days of establishing residency",
+      "Register your vehicle with the county within 90 days",
+      "Altitude adjustment is real — give yourself 2 weeks to acclimate",
+    ],
+  },
+  "us-nashville": {
+    setupDifficulty: 1, setupDifficultyLabel: "Very Easy",
+    touristVisaDays: 365, estimatedMoveInCostUSD: 2200,
+    bankingNotes: "Avenue Bank (local favorite) or Pinnacle Financial. Any major US bank works.",
+    healthInsuranceRequired: false,
+    keySteps: [
+      "No visa or immigration required for US citizens/residents",
+      "Tennessee has no state income tax — update W-9 / tax withholding with your employer",
+      "Get a Tennessee driver's license within 30 days of establishing residency",
+      "Affordable neighborhoods: East Nashville, Antioch, Madison are popular for remote workers",
+    ],
+  },
+  "us-tampa": {
+    setupDifficulty: 1, setupDifficultyLabel: "Very Easy",
+    touristVisaDays: 365, estimatedMoveInCostUSD: 2300,
+    bankingNotes: "Suncoast Credit Union or Bank of America. Florida has no state income tax — straightforward for remote workers.",
+    healthInsuranceRequired: false,
+    keySteps: [
+      "No visa or immigration required for US citizens/residents",
+      "Florida has no state income tax — notify your employer/payroll system",
+      "Get a Florida driver's license and register your car within 30 days",
+      "Budget for hurricane insurance — standard homeowner/renter's insurance often excludes flood damage",
+    ],
+  },
+  "us-phoenix": {
+    setupDifficulty: 1, setupDifficultyLabel: "Very Easy",
+    touristVisaDays: 365, estimatedMoveInCostUSD: 2000,
+    bankingNotes: "Desert Financial Credit Union or JPMorgan Chase. Phoenix is very car-centric so a US bank with no ATM fees is key.",
+    healthInsuranceRequired: false,
+    keySteps: [
+      "No visa or immigration required for US citizens/residents",
+      "Get an Arizona driver's license within 30 days",
+      "Very car-dependent city — ensure you have reliable transportation before moving",
+      "Summer heat is extreme (110°F+) — check that your housing has modern AC before signing a lease",
+    ],
+  },
+  "us-raleigh": {
+    setupDifficulty: 1, setupDifficultyLabel: "Very Easy",
+    touristVisaDays: 365, estimatedMoveInCostUSD: 2200,
+    bankingNotes: "First Citizens Bank (headquartered in Raleigh) or any major US bank.",
+    healthInsuranceRequired: false,
+    keySteps: [
+      "No visa or immigration required for US citizens/residents",
+      "Research Triangle area has multiple cities (Raleigh/Durham/Chapel Hill) — pick the right one for your lifestyle",
+      "Get a North Carolina driver's license within 60 days",
+      "Cary and Apex are top-rated nearby suburbs if you prefer quieter neighborhoods",
+    ],
+  },
+  "us-seattle": {
+    setupDifficulty: 1, setupDifficultyLabel: "Very Easy",
+    touristVisaDays: 365, estimatedMoveInCostUSD: 3200,
+    bankingNotes: "HomeStreet Bank (local) or the usual national banks. Seattle has major tech campuses — many credit unions.",
+    healthInsuranceRequired: false,
+    keySteps: [
+      "No visa or immigration required for US citizens/residents",
+      "Washington has no state income tax — notify your employer",
+      "Seattle rental market is competitive — budget for 2 months deposit",
+      "Get a Washington State Enhanced Driver's License within 30 days",
+    ],
+  },
+};
+
+export function getRelocationInfo(locationId: string): RelocationInfo {
+  return RELOCATION_INFO[locationId] ?? {
+    setupDifficulty: 3,
+    setupDifficultyLabel: "Moderate",
+    touristVisaDays: 90,
+    estimatedMoveInCostUSD: 4000,
+    bankingNotes: "Check local banking requirements before arrival. Wise or Revolut recommended as a bridge.",
+    healthInsuranceRequired: true,
+    keySteps: [
+      "Check visa requirements for your passport at your home country's embassy",
+      "Research the local digital nomad or freelancer visa options",
+      "Purchase comprehensive health insurance valid in this country",
+      "Join expat forums (Reddit, Facebook groups) for up-to-date practical advice",
+    ],
+  };
+}
+
 export function getLocationById(id: string): LocationData | undefined {
   return LOCATIONS.find((l) => l.id === id);
 }

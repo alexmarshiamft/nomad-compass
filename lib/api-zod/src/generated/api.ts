@@ -131,6 +131,37 @@ export const CompareLocationsResponse = zod.object({
         visaFeeUSD: zod.number().optional(),
         citizenshipPathYears: zod.number().optional(),
       }),
+      relocationInfo: zod.object({
+        setupDifficulty: zod
+          .number()
+          .describe(
+            "1 (trivial) to 5 (very challenging) difficulty to legally move and stay",
+          ),
+        setupDifficultyLabel: zod
+          .string()
+          .describe(
+            'Human label e.g. \"Very Easy\", \"Easy\", \"Moderate\", \"Hard\", \"Very Challenging\"',
+          ),
+        touristVisaDays: zod
+          .number()
+          .describe("Days a US\/EU passport holder can stay without a visa"),
+        estimatedMoveInCostUSD: zod
+          .number()
+          .describe(
+            "Estimated one-time relocation cost (flight + deposits + fees)",
+          ),
+        bankingNotes: zod
+          .string()
+          .describe("Notes on opening a local bank account"),
+        healthInsuranceRequired: zod
+          .boolean()
+          .describe(
+            "Whether private health insurance is required for visa\/residency",
+          ),
+        keySteps: zod
+          .array(zod.string())
+          .describe("Actionable steps to legally live and work remotely there"),
+      }),
       pros: zod.array(zod.string()),
       cons: zod.array(zod.string()),
     }),
@@ -240,6 +271,37 @@ export const GetRecommendationsResponse = zod.object({
         visaFeeUSD: zod.number().optional(),
         citizenshipPathYears: zod.number().optional(),
       }),
+      relocationInfo: zod.object({
+        setupDifficulty: zod
+          .number()
+          .describe(
+            "1 (trivial) to 5 (very challenging) difficulty to legally move and stay",
+          ),
+        setupDifficultyLabel: zod
+          .string()
+          .describe(
+            'Human label e.g. \"Very Easy\", \"Easy\", \"Moderate\", \"Hard\", \"Very Challenging\"',
+          ),
+        touristVisaDays: zod
+          .number()
+          .describe("Days a US\/EU passport holder can stay without a visa"),
+        estimatedMoveInCostUSD: zod
+          .number()
+          .describe(
+            "Estimated one-time relocation cost (flight + deposits + fees)",
+          ),
+        bankingNotes: zod
+          .string()
+          .describe("Notes on opening a local bank account"),
+        healthInsuranceRequired: zod
+          .boolean()
+          .describe(
+            "Whether private health insurance is required for visa\/residency",
+          ),
+        keySteps: zod
+          .array(zod.string())
+          .describe("Actionable steps to legally live and work remotely there"),
+      }),
       pros: zod.array(zod.string()),
       cons: zod.array(zod.string()),
     }),
@@ -286,6 +348,37 @@ export const GetTaxAnalysisResponse = zod.object({
     .describe("Gemini-generated detailed tax explanation"),
   optimizationTips: zod.array(zod.string()),
   warnings: zod.array(zod.string()),
+  relocationInfo: zod.object({
+    setupDifficulty: zod
+      .number()
+      .describe(
+        "1 (trivial) to 5 (very challenging) difficulty to legally move and stay",
+      ),
+    setupDifficultyLabel: zod
+      .string()
+      .describe(
+        'Human label e.g. \"Very Easy\", \"Easy\", \"Moderate\", \"Hard\", \"Very Challenging\"',
+      ),
+    touristVisaDays: zod
+      .number()
+      .describe("Days a US\/EU passport holder can stay without a visa"),
+    estimatedMoveInCostUSD: zod
+      .number()
+      .describe(
+        "Estimated one-time relocation cost (flight + deposits + fees)",
+      ),
+    bankingNotes: zod
+      .string()
+      .describe("Notes on opening a local bank account"),
+    healthInsuranceRequired: zod
+      .boolean()
+      .describe(
+        "Whether private health insurance is required for visa\/residency",
+      ),
+    keySteps: zod
+      .array(zod.string())
+      .describe("Actionable steps to legally live and work remotely there"),
+  }),
 });
 
 /**

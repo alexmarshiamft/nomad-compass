@@ -13,6 +13,7 @@ import {
   LOCATIONS,
   getLocationById,
   getLocationStats,
+  getRelocationInfo,
 } from "../../lib/location-data.js";
 import {
   calculateTax,
@@ -107,6 +108,7 @@ function buildLocationComparison(
       visaFeeUSD: location.visa.visaFeeUSD,
       citizenshipPathYears: location.visa.citizenshipPathYears,
     },
+    relocationInfo: getRelocationInfo(location.id),
     pros: location.pros,
     cons: location.cons,
   };
@@ -297,6 +299,7 @@ router.post("/locations/tax-analysis", async (req, res): Promise<void> => {
       aiAnalysis,
       optimizationTips,
       warnings,
+      relocationInfo: getRelocationInfo(locationId),
     })
   );
 });

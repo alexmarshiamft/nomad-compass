@@ -7,7 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell } from "recharts";
-import { AlertTriangle, Lightbulb, Calculator, Info } from "lucide-react";
+import { AlertTriangle, Lightbulb, Calculator, Info, Plane, CheckCircle2, Building2, HeartPulse, DollarSign } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function TaxAnalysis() {
@@ -185,7 +187,7 @@ export default function TaxAnalysis() {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid md:grid-cols-2 gap-8 mb-8">
         <div className="space-y-4">
           <h3 className="text-xl font-semibold flex items-center gap-2">
             <Lightbulb className="w-5 h-5 text-amber-500" />
@@ -220,6 +222,92 @@ export default function TaxAnalysis() {
           </div>
         </div>
       </div>
+
+      {/* Relocation Reality Check */}
+      {data.relocationInfo && (
+        <Card className="border-2">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-xl">
+              <Plane className="w-5 h-5 text-primary" />
+              Relocation Reality Check
+            </CardTitle>
+            <CardDescription>
+              Practical steps and costs to legally live and work remotely in {data.city}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Stat pills */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="flex flex-col gap-1 p-4 rounded-xl bg-muted/50 border">
+                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                  <Plane className="w-3 h-3" /> Setup Difficulty
+                </span>
+                <span className="font-bold text-lg leading-tight">{data.relocationInfo.setupDifficultyLabel}</span>
+                <div className="flex gap-0.5 mt-1">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className={`h-1.5 flex-1 rounded-full ${i < data.relocationInfo.setupDifficulty ? "bg-primary" : "bg-muted"}`}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col gap-1 p-4 rounded-xl bg-muted/50 border">
+                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3" /> Visa-Free Stay
+                </span>
+                <span className="font-bold text-lg leading-tight">{data.relocationInfo.touristVisaDays} days</span>
+                <span className="text-xs text-muted-foreground">on tourist entry</span>
+              </div>
+              <div className="flex flex-col gap-1 p-4 rounded-xl bg-muted/50 border">
+                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                  <DollarSign className="w-3 h-3" /> Move-In Cost
+                </span>
+                <span className="font-bold text-lg leading-tight">{formatCurrency(data.relocationInfo.estimatedMoveInCostUSD)}</span>
+                <span className="text-xs text-muted-foreground">estimated one-time</span>
+              </div>
+              <div className="flex flex-col gap-1 p-4 rounded-xl bg-muted/50 border">
+                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                  <HeartPulse className="w-3 h-3" /> Health Insurance
+                </span>
+                <span className="font-bold text-lg leading-tight">{data.relocationInfo.healthInsuranceRequired ? "Required" : "Optional"}</span>
+                <span className="text-xs text-muted-foreground">for visa / residency</span>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Key Steps */}
+            <div>
+              <h4 className="font-semibold mb-3 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                Step-by-Step Guide
+              </h4>
+              <ol className="space-y-3">
+                {data.relocationInfo.keySteps.map((step, i) => (
+                  <li key={i} className="flex gap-3 text-sm">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center mt-0.5">
+                      {i + 1}
+                    </span>
+                    <span className="leading-relaxed text-muted-foreground">{step}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            <Separator />
+
+            {/* Banking */}
+            <div className="flex gap-3">
+              <Building2 className="w-4 h-4 text-primary flex-shrink-0 mt-1" />
+              <div>
+                <p className="text-sm font-semibold mb-1">Banking Notes</p>
+                <p className="text-sm text-muted-foreground">{data.relocationInfo.bankingNotes}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
