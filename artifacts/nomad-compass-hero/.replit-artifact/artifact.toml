@@ -1,0 +1,31 @@
+kind = "video"
+previewPath = "/nomad-compass-hero/"
+title = "Nomad Compass Hero Video"
+version = "1.0.0"
+id = "artifacts/nomad-compass-hero"
+router = "path"
+
+[[integratedSkills]]
+name = "video-js"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/nomad-compass-hero/" ]
+localPort = 21534
+
+[services.development]
+run = "pnpm --filter @workspace/nomad-compass-hero run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/nomad-compass-hero", "run", "build" ]
+publicDir = "artifacts/nomad-compass-hero/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21534"
+BASE_PATH = "/nomad-compass-hero/"

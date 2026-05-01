@@ -1,0 +1,14 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "_2Dh-7VzVP7ocVvEjlcZo"
+uri = "file://artifacts/nomad-compass-hero/public/images/globe.png"
+type = "image"
+title = "Abstract globe lines"
+
+[[generated]]
+id = "Ftyw8TThNmXLGOF0-Q5yt"
+uri = "file://artifacts/nomad-compass-hero/public/images/data-texture.png"
+type = "image"
+title = "Data UI elements"
