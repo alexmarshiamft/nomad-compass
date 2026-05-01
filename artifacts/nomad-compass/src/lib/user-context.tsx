@@ -4,6 +4,7 @@ interface UserProfile {
   annualIncomeUSD: number;
   employerCountry: string;
   employerState?: string;
+  employerCity: string;
   workSchedule?: string;
   teamTimezone?: string;
   priorities: string[];
@@ -23,6 +24,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     annualIncomeUSD: 50000,
     employerCountry: "US",
     employerState: "CA",
+    employerCity: "Los Angeles, CA",
     workSchedule: "9am-7pm",
     teamTimezone: "PST",
     priorities: [],

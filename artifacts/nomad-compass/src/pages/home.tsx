@@ -40,6 +40,7 @@ const formSchema = z.object({
   annualIncomeUSD: z.coerce.number().min(1, "Income must be greater than 0"),
   employerCountry: z.string().min(2, "Please select an employer country"),
   employerState: z.string().optional(),
+  employerCity: z.string().optional(),
   workSchedule: z.string().optional(),
   teamTimezone: z.string().optional(),
 });
@@ -90,6 +91,7 @@ export default function Home() {
       annualIncomeUSD: profile.annualIncomeUSD,
       employerCountry: profile.employerCountry,
       employerState: profile.employerState || "",
+      employerCity: profile.employerCity || "Los Angeles, CA",
       workSchedule: profile.workSchedule || "",
       teamTimezone: profile.teamTimezone || "",
     },
@@ -105,6 +107,7 @@ export default function Home() {
       annualIncomeUSD: values.annualIncomeUSD,
       employerCountry: values.employerCountry,
       employerState: values.employerState || undefined,
+      employerCity: values.employerCity || "Los Angeles, CA",
       workSchedule: values.workSchedule || undefined,
       teamTimezone: values.teamTimezone || undefined,
       stayInUSA,
@@ -123,6 +126,7 @@ export default function Home() {
       annualIncomeUSD: values.annualIncomeUSD,
       employerCountry: values.employerCountry,
       employerState: values.employerState || undefined,
+      employerCity: values.employerCity || "Los Angeles, CA",
       workSchedule: values.workSchedule || undefined,
       teamTimezone: values.teamTimezone || undefined,
       priorities: selectedPriorities,
@@ -250,6 +254,50 @@ export default function Home() {
                           )}
                         />
                       )}
+
+                      <FormField
+                        control={form.control}
+                        name="employerCity"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-white/80">Your Current City <span className="text-white/40 font-normal">(for cost-of-living comparison)</span></FormLabel>
+                            <FormControl>
+                              <div>
+                                <Input
+                                  list="city-suggestions"
+                                  className="bg-white/10 border-white/20 text-white placeholder:text-white/30 focus:border-amber-400 focus:ring-amber-400/20"
+                                  placeholder="e.g. Los Angeles, CA"
+                                  data-testid="input-employer-city"
+                                  {...field}
+                                />
+                                <datalist id="city-suggestions">
+                                  <option value="Los Angeles, CA" />
+                                  <option value="San Francisco, CA" />
+                                  <option value="New York, NY" />
+                                  <option value="Seattle, WA" />
+                                  <option value="Austin, TX" />
+                                  <option value="Chicago, IL" />
+                                  <option value="Boston, MA" />
+                                  <option value="Miami, FL" />
+                                  <option value="Denver, CO" />
+                                  <option value="Nashville, TN" />
+                                  <option value="Phoenix, AZ" />
+                                  <option value="Atlanta, GA" />
+                                  <option value="Dallas, TX" />
+                                  <option value="Portland, OR" />
+                                  <option value="San Diego, CA" />
+                                  <option value="Washington, DC" />
+                                  <option value="Minneapolis, MN" />
+                                  <option value="London, UK" />
+                                  <option value="Toronto, Canada" />
+                                  <option value="Sydney, Australia" />
+                                </datalist>
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
                       <div className="grid sm:grid-cols-2 gap-4">
                         <FormField

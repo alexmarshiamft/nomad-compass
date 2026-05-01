@@ -16,6 +16,24 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowUpDown, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+const HOME_CITY_COL: Record<string, number> = {
+  "los angeles": 3200, "san francisco": 3900, "new york": 3800,
+  "seattle": 2900, "austin": 2300, "chicago": 2600, "boston": 3300,
+  "miami": 2700, "denver": 2600, "nashville": 2200, "phoenix": 2100,
+  "atlanta": 2300, "dallas": 2200, "portland": 2700, "san diego": 3100,
+  "washington": 3200, "minneapolis": 2300, "london": 3500,
+  "toronto": 2800, "sydney": 3400, "san jose": 3800, "raleigh": 2200,
+  "tampa": 2300, "houston": 2200, "charlotte": 2300, "sacramento": 2800,
+};
+
+function getHomeCityCOL(employerCity: string): number | null {
+  const lower = employerCity.toLowerCase();
+  for (const [key, val] of Object.entries(HOME_CITY_COL)) {
+    if (lower.includes(key)) return val;
+  }
+  return null;
+}
+
 const DIFFICULTY_COLOR: Record<number, string> = {
   1: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300",
   2: "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300",
@@ -96,6 +114,10 @@ export default function Compare() {
   }, [compareMutation.data, sortCol, sortDesc]);
 
   const isUSMode = profile.stayInUSA;
+  const homeCOL = getHomeCityCOL(profile.employerCity || "Los Angeles, CA");
+  const homeCityLabel = profile.employerCity
+    ? profile.employerCity.split(",")[0].trim()
+    : "Home";
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -108,8 +130,8 @@ export default function Compare() {
         </div>
         <p className="text-muted-foreground">
           {isUSMode
-            ? `Ranking US cities for a ${formatCurrency(profile.annualIncomeUSD)} income, including federal + state taxes and cost of living.`
-            : `Ranking locations based on an income of ${formatCurrency(profile.annualIncomeUSD)} from ${profile.employerCountry}.`}
+            ? `Ranking US cities for a ${formatCurrency(profile.annualIncomeUSD)} income, including federal + state taxes and cost of living${homeCOL ? ` vs. ${homeCityLabel} ($${homeCOL.toLocaleString()}/mo)` : ""}.`
+            : `Ranking locations based on a ${formatCurrency(profile.annualIncomeUSD)} income from ${profile.employerCountry}${homeCOL ? ` — COL compared to ${homeCityLabel} ($${homeCOL.toLocaleString()}/mo)` : ""}.`}
         </p>
       </div>
 
@@ -133,6 +155,11 @@ export default function Compare() {
                 <TableHead className="cursor-pointer text-right" onClick={() => handleSort("monthlyCostOfLivingUSD")}>
                   <div className="flex justify-end items-center gap-1">COL/mo <ArrowUpDown className="w-3 h-3" /></div>
                 </TableHead>
+                {homeCOL !== null && (
+                  <TableHead className="text-right text-muted-foreground/80 whitespace-nowrap">
+                    vs. {homeCityLabel}
+                  </TableHead>
+                )}
                 <TableHead className="cursor-pointer text-right" onClick={() => handleSort("monthlyDisposableIncomeUSD")}>
                   <div className="flex justify-end items-center gap-1">Disposable/mo <ArrowUpDown className="w-3 h-3" /></div>
                 </TableHead>
@@ -154,7 +181,7 @@ export default function Compare() {
               {compareMutation.isPending || isLoadingLocations ? (
                 Array.from({ length: isUSMode ? 8 : 10 }).map((_, i) => (
                   <TableRow key={i}>
-                    {Array.from({ length: isUSMode ? 9 : 10 }).map((_, j) => (
+                    {Array.from({ length: isUSMode ? (homeCOL ? 10 : 9) : (homeCOL ? 11 : 10) }).map((_, j) => (
                       <TableCell key={j}><Skeleton className="h-6 w-full" /></TableCell>
                     ))}
                   </TableRow>
@@ -182,6 +209,25 @@ export default function Compare() {
                   <TableCell className="text-right text-rose-600 dark:text-rose-400">
                     {formatCurrency(loc.monthlyCostOfLivingUSD)}
                   </TableCell>
+                  {homeCOL !== null && (() => {
+                    const savings = homeCOL - loc.monthlyCostOfLivingUSD;
+                    const pct = Math.round(Math.abs(savings) / homeCOL * 100);
+                    return (
+                      <TableCell className="text-right">
+                        {savings > 0 ? (
+                          <span className="text-emerald-600 dark:text-emerald-400 font-medium text-sm whitespace-nowrap">
+                            -{pct}% ({formatCurrency(savings)})
+                          </span>
+                        ) : savings < 0 ? (
+                          <span className="text-rose-600 dark:text-rose-400 font-medium text-sm whitespace-nowrap">
+                            +{pct}% ({formatCurrency(-savings)})
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">Same</span>
+                        )}
+                      </TableCell>
+                    );
+                  })()}
                   <TableCell className="text-right font-bold">
                     {formatCurrency(loc.monthlyDisposableIncomeUSD)}
                   </TableCell>
