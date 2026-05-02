@@ -1,6 +1,6 @@
 [build]
   command = "export NETLIFY=true && pnpm install && pnpm run build --filter ./artifacts/api-server && pnpm run build --filter ./artifacts/nomad-compass"
-  publish = "artifacts/nomad-compass/dist"
+  publish = "artifacts/nomad-compass/dist/public"
   functions = "artifacts/api-server/dist"
 
 [functions]
