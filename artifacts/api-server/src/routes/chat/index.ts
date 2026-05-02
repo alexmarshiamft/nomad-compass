@@ -54,8 +54,13 @@ router.post("/chat", async (req, res): Promise<void> => {
     .map((m) => ({ role: m.role as "user" | "assistant", content: m.content }))
     .slice(-20);
 
-  const reply = await generateChatReply(message.trim(), chatHistory, ctx);
-  res.json({ reply });
+  try {
+    const reply = await generateChatReply(message.trim(), chatHistory, ctx);
+    res.json({ reply });
+  } catch (err: any) {
+    console.error("Gemini API Error:", err);
+    res.status(500).json({ error: err.message || "Failed to generate AI response" });
+  }
 });
 
 export default router;

@@ -17,7 +17,7 @@ function getGeminiClient(): GoogleGenerativeAI {
 export async function generateAISummary(prompt: string): Promise<string> {
   try {
     const client = getGeminiClient();
-    const model = client.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = client.getGenerativeModel({ model: "gemini-flash-latest" });
     const result = await model.generateContent(prompt);
     return result.response.text();
   } catch (err: unknown) {
@@ -158,7 +158,7 @@ ${cityList}
 Answer questions about this data, help the user decide between options, explain trade-offs, and give personalized recommendations. Keep responses under 200 words unless the user asks for detail. Use markdown bullet points where helpful.`;
 
   const model = client.getGenerativeModel({
-    model: "gemini-2.5-flash",
+    model: "gemini-flash-latest",
     systemInstruction,
   });
 

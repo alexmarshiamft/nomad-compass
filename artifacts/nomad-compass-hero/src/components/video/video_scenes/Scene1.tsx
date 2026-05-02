@@ -13,7 +13,7 @@ export function Scene1() {
     return () => timers.forEach(t => clearTimeout(t));
   }, []);
 
-  const text = "THE WORLD IS YOUR OFFICE";
+  const text = "EXPLORE";
   const words = text.split(" ");
 
   return (
@@ -32,7 +32,7 @@ export function Scene1() {
         transition={{ duration: 6, ease: "linear" }}
       >
         <video 
-          src={`${import.meta.env.BASE_URL}videos/city-night.mp4`}
+          src={`${import.meta.env.BASE_URL}videos/coastline.mp4`}
           autoPlay muted loop playsInline
           className="w-full h-full object-cover"
         />

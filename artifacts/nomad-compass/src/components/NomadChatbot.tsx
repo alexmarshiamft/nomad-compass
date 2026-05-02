@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Send, Bot, User, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import type { LocationComparison } from "@workspace/api-client-react";
+import { type LocationComparison, customFetch } from "@workspace/api-client-react";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -129,7 +129,7 @@ export default function NomadChatbot({ comparisons, annualIncomeUSD, employerCou
         })),
       };
 
-      const res = await fetch("/api/chat", {
+      const data = await customFetch<{ reply: string }>("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -139,8 +139,6 @@ export default function NomadChatbot({ comparisons, annualIncomeUSD, employerCou
         }),
       });
 
-      if (!res.ok) throw new Error(`Server error: ${res.status}`);
-      const data = await res.json() as { reply: string };
       setMessages([...newHistory, { role: "assistant", content: data.reply }]);
     } catch (err) {
       setError("Something went wrong. Please try again.");

@@ -66,6 +66,16 @@ export default defineConfig({
     fs: {
       strict: true,
     },
+    proxy: {
+      "/api": {
+        target: "http://127.0.0.1:3000",
+        changeOrigin: true,
+      },
+      "/nomad-compass-hero": {
+        target: "http://127.0.0.1:5174",
+        changeOrigin: true,
+      },
+    },
   },
   preview: {
     port,
