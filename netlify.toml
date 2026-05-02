@@ -1,0 +1,18 @@
+[build]
+  command = "export NETLIFY=true && pnpm install && pnpm run build --filter @workspace/api-server && pnpm run build --filter @workspace/nomad-compass"
+  publish = "artifacts/nomad-compass/dist"
+  functions = "artifacts/api-server/dist"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/index/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
