@@ -22,6 +22,7 @@ export function Scene4() {
       const timer = setTimeout(() => setCityIndex(prev => prev + 1), delay);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [phase, cityIndex]);
 
   return (
