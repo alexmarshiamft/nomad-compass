@@ -1,5 +1,5 @@
 [build]
-  command = "export NETLIFY=true && pnpm install && pnpm --filter ./artifacts/api-server run build && pnpm --filter ./artifacts/nomad-compass run build"
+  command = "export NETLIFY=true && pnpm install && pnpm --filter ./artifacts/api-server run build && pnpm --filter ./artifacts/nomad-compass run build && pnpm --filter ./artifacts/nomad-compass-hero run build && mkdir -p artifacts/nomad-compass/dist/public/nomad-compass-hero && cp -r artifacts/nomad-compass-hero/dist/public/* artifacts/nomad-compass/dist/public/nomad-compass-hero/"
   publish = "artifacts/nomad-compass/dist/public"
   functions = "artifacts/api-server/dist"
 
