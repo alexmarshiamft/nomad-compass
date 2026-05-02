@@ -13,6 +13,11 @@
   force = true
 
 [[redirects]]
+  from = "/nomad-compass-hero/*"
+  to = "/nomad-compass-hero/index.html"
+  status = 200
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
