@@ -20,7 +20,10 @@ export default function TaxAnalysis() {
   const taxMutation = useGetTaxAnalysis();
 
   useEffect(() => {
-    if (locationId && !taxMutation.isPending && !taxMutation.data) {
+    if (!locationId) return;
+
+    const isCurrentLocation = taxMutation.variables?.data?.locationId === locationId;
+    if (!taxMutation.isPending && (!taxMutation.data || !isCurrentLocation)) {
       taxMutation.mutate({
         data: {
           locationId,
@@ -30,9 +33,11 @@ export default function TaxAnalysis() {
         }
       });
     }
-  }, [locationId, profile, taxMutation]);
+  }, [locationId, profile, taxMutation.isPending, taxMutation.data, taxMutation.variables, taxMutation.mutate]);
 
-  if (taxMutation.isPending || !taxMutation.data) {
+  const isCurrentLocation = taxMutation.variables?.data?.locationId === locationId;
+
+  if (taxMutation.isPending || !taxMutation.data || !isCurrentLocation) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-5xl space-y-8">
         <Skeleton className="h-12 w-1/3" />

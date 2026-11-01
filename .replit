@@ -34,3 +34,4 @@ externalPort = 3001
 [userenv]
 
 [userenv.shared]
+GEMINI_API_KEY = "process.env.GOOGLE_API_KEY || 'REDACTED_API_KEY'"

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "pnpm install && pnpm --filter @workspace/nomad-compass run build",
+  "outputDirectory": "artifacts/nomad-compass/dist/public",
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://nomad-compass-api.up.railway.app/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

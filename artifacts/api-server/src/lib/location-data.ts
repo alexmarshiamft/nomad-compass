@@ -53,6 +53,7 @@ export interface LocationData {
   pros: string[];
   cons: string[];
 }
+import { ADDITIONAL_54_LOCATIONS } from "./additional-locations.js";
 
 export const LOCATIONS: LocationData[] = [
   {
@@ -69,9 +70,9 @@ export const LOCATIONS: LocationData[] = [
       socialSecurityRate: 0.11,
       employerPays: false,
       hasTaxTreaty: ["US", "UK", "DE", "FR", "CA", "AU", "BR", "IN", "JP", "SG"],
-      specialRegimes: "NHR (Non-Habitual Resident): 20% flat income tax rate for 10 years",
-      taxResidencyNotes: "Resident after 183 days. NHR regime available for first-time residents or those who haven't been resident in the past 5 years.",
-      remoteWorkerRegime: "NHR 2.0 (IFICI): 20% flat rate on professional income for qualifying activities",
+      specialRegimes: "NHR 2.0 (IFICI): 20% flat income tax rate for qualifying activities (Original NHR closed)",
+      taxResidencyNotes: "Resident after 183 days. Original NHR is closed for 2026. NHR 2.0 (IFICI) available for highly qualified professionals.",
+      remoteWorkerRegime: "NHR 2.0 (IFICI): 20% flat rate on professional income",
     },
     col: {
       monthlyRentUSD: 1350,
@@ -117,8 +118,8 @@ export const LOCATIONS: LocationData[] = [
       socialSecurityRate: 0.11,
       employerPays: false,
       hasTaxTreaty: ["US", "UK", "DE", "FR", "CA", "AU", "BR", "IN", "JP", "SG"],
-      specialRegimes: "NHR: 20% flat income tax rate for 10 years",
-      taxResidencyNotes: "Same NHR regime as Lisbon. Resident after 183 days.",
+      specialRegimes: "NHR 2.0 (IFICI): 20% flat rate (Original NHR closed)",
+      taxResidencyNotes: "Resident after 183 days. Original NHR is closed for 2026. NHR 2.0 (IFICI) available.",
       remoteWorkerRegime: "NHR 2.0 (IFICI): 20% flat rate",
     },
     col: {
@@ -270,7 +271,7 @@ export const LOCATIONS: LocationData[] = [
       socialSecurityRate: 0.092,
       employerPays: false,
       hasTaxTreaty: ["US", "UK", "DE", "FR", "SK", "AT"],
-      taxResidencyNotes: "Resident after 183 days. Flat 15% up to 48x average wage, 23% above.",
+      taxResidencyNotes: "Resident after 183 days. Flat 15% up to 36x average wage (2026 threshold), 23% above.",
     },
     col: {
       monthlyRentUSD: 900,
@@ -336,10 +337,10 @@ export const LOCATIONS: LocationData[] = [
     },
     visa: {
       hasDigitalNomadVisa: true,
-      visaName: "White Card (Fehér Kártya)",
-      visaRequirements: "Remote worker visa, income requirements apply",
+      visaName: "White Card (Fehér Kártya) - 2026 Rules",
+      visaRequirements: "Remote worker visa. Must not work for a Hungarian entity.",
       maxStayDays: 365,
-      visaFeeUSD: 110,
+      visaFeeUSD: 130,
       citizenshipPathYears: 8,
     },
     pros: ["15% flat income tax", "Very affordable", "Vibrant nightlife", "EU access"],
@@ -359,7 +360,7 @@ export const LOCATIONS: LocationData[] = [
       socialSecurityRate: 0.25,
       employerPays: false,
       hasTaxTreaty: ["US", "UK", "DE", "FR", "IT"],
-      taxResidencyNotes: "10% flat income tax — among the lowest in the EU. High social security though.",
+      taxResidencyNotes: "10% flat income tax. 2026 regulations enforce strict health and pension contribution thresholds, raising effective tax significantly.",
     },
     col: {
       monthlyRentUSD: 600,
@@ -405,7 +406,7 @@ export const LOCATIONS: LocationData[] = [
       socialSecurityRate: 0.138,
       employerPays: false,
       hasTaxTreaty: ["US", "UK", "DE", "FR", "RU"],
-      taxResidencyNotes: "10% flat income tax — one of the lowest rates in the world for an EU country.",
+      taxResidencyNotes: "10% flat income tax — one of the lowest rates in the world for an EU country (Confirmed for 2026).",
     },
     col: {
       monthlyRentUSD: 550,
@@ -601,7 +602,7 @@ export const LOCATIONS: LocationData[] = [
       socialSecurityRate: 0.00,
       employerPays: true,
       hasTaxTreaty: ["US", "UK", "DE", "FR", "JP", "CN", "AU"],
-      taxResidencyNotes: "Territorial system: only Singapore-sourced income taxed. Foreign-sourced income not taxable unless remitted. Max effective rate is 22%.",
+      taxResidencyNotes: "Territorial system: foreign-sourced income not taxable unless remitted. Obtaining a long-term remote work visa is highly restricted in 2026.",
     },
     col: {
       monthlyRentUSD: 2800,
@@ -1457,7 +1458,7 @@ export const LOCATIONS: LocationData[] = [
       socialSecurityRate: 0.185,
       employerPays: false,
       hasTaxTreaty: ["US", "UK", "DE", "FR", "JP", "CN", "AU"],
-      taxResidencyNotes: "Very high income taxes. Top rate reaches 55% for million+ earners. Social security on top of that.",
+      taxResidencyNotes: "Very high income taxes. 2026 top rate reaches 55% for million+ earners. Social security is strictly enforced on top of that.",
     },
     col: {
       monthlyRentUSD: 1600,
@@ -1717,7 +1718,7 @@ export const LOCATIONS: LocationData[] = [
       socialSecurityRate: 0.053,
       employerPays: false,
       hasTaxTreaty: ["US", "UK", "DE", "FR", "JP", "CN", "AU", "SG"],
-      taxResidencyNotes: "Federal + cantonal + municipal taxes. Zurich canton rates used. Lump sum taxation available for wealthy non-working residents.",
+      taxResidencyNotes: "Federal + cantonal + municipal taxes. Zurich canton rates used. 2026 updates show very high cost of living but unmatched quality.",
     },
     col: {
       monthlyRentUSD: 3500,
@@ -2335,6 +2336,7 @@ export const LOCATIONS: LocationData[] = [
     pros: ["No state income tax", "Major tech hub (Amazon, Microsoft)", "Scenic nature access", "Progressive culture", "High salaries"],
     cons: ["High cost of living", "Rainy and grey winters", "Traffic", "Homelessness issues", "Expensive housing"],
   },
+  ...ADDITIONAL_54_LOCATIONS,
 ];
 
 export interface RelocationInfo {

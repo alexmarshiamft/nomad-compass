@@ -1,0 +1,45 @@
+# Render Blueprint for Nomad Compass Fullstack Monorepo
+services:
+  # Backend API Server
+  - type: web
+    name: nomad-compass-api
+    runtime: node
+    plan: starter
+    region: oregon
+    buildCommand: pnpm install && pnpm --filter @workspace/api-server run build
+    startCommand: node --enable-source-maps ./artifacts/api-server/dist/index.mjs
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: nomad-compass-postgres
+          property: connectionString
+      - key: STRIPE_SECRET_KEY
+        sync: false
+
+  # Frontend Web Client
+  - type: web
+    name: nomad-compass-web
+    runtime: static
+    plan: free
+    region: oregon
+    buildCommand: pnpm install && pnpm --filter @workspace/nomad-compass run build
+    staticPublishPath: ./artifacts/nomad-compass/dist/public
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://nomad-compass-api.onrender.com/api/*
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+databases:
+  - name: nomad-compass-postgres
+    plan: starter
+    databaseName: nomad_compass
+    user: nomad_user
